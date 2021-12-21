@@ -23,12 +23,21 @@ export const Navbar = () => {
               <Button variant="contained" color="inherit">               
                   <Link to='/' className='HomePage' color="inherit">
                     Home
-                    
                   </Link>
               </Button>
               <Button variant="contained" color="inherit">               
                   <Link to='/profile' className='SortPage' color="inherit">
                     Profile
+                  </Link>
+              </Button>
+              <Button variant="contained" color="inherit">               
+                  <Link to='/search' className='SortPage' color="inherit">
+                    Search
+                  </Link>
+              </Button>
+              <Button variant="contained" color="inherit">               
+                  <Link to='/login' className='SortPage' color="inherit">
+                    Login
                   </Link>
               </Button>
             </Toolbar>
