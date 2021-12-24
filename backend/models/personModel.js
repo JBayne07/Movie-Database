@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 const {Schema} = mongoose;
 
 const personSchema = new Schema({
@@ -8,4 +8,4 @@ const personSchema = new Schema({
     collaborators: [String]
 });
 
-export const Person = mongoose.model('Person}', personSchema);
+const Person =  module.exports = mongoose.model('Person}', personSchema);
