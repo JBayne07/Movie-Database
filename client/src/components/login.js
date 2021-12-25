@@ -8,13 +8,13 @@ export const Login = () => {
 
     const login = () =>{
         let options = {
-            url: 'http://localhost:9000/api/user',
-            method: 'GET',
+            url: 'http://localhost:9000/api/login',
+            method: 'POST',
             headers: {
                 'Accept' : 'application/json',
                 'Content-Type' : 'application/json;charset=UTF-8'
             },
-            params:{
+            data:{
                 username: username,
                 password: password
             }

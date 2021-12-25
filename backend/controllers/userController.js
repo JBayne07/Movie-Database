@@ -32,12 +32,18 @@ module.exports.getAllUsers = (req, res) => {
     });
 }
 
-module.exports.findUser = (req, res) => {
-    console.log('findUser', req);
+module.exports.login = (req, res) => {
+    console.log('login', req.body, 'session', req.session);
 
-    User.find({username:req.body.username, password:req.body.password}, function(err, result){
+    User.findOne({username:req.body.username, password:req.body.password}, function(err, result){
         if(err) return console.log(err);
         console.log(result);
+        req.session.userId = result._id.toString();
         res.status(200).json(result);
     });
+}
+
+module.exports.session = (req, res) => {
+    console.log('session', req.query);
+    
 }

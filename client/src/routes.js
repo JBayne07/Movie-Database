@@ -5,6 +5,7 @@ import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 
 export const NavRoutes = () => {
+    
     return(
         <>
             <Routes>

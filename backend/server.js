@@ -1,6 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const routes = require('./routes/routes');
+const session = require('express-session');
+const oneDay = 1000 * 60 * 60 * 24;
 require('dotenv').config();
 
 const app = express();
@@ -21,6 +23,12 @@ app.use(function (req, res, next) {
     next();
 });
 
+app.use(session({
+    secret: 'some secret key',
+    resave: false,
+    saveUninitialized: true,
+    cookie: {maxAge:oneDay}
+}));
 
 app.use('/api', routes);
 

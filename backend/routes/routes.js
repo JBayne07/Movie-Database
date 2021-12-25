@@ -6,7 +6,8 @@ const personController = require('../controllers/personController');
 const reviewController = require('../controllers/reviewController');
 const userController = require('../controllers/userController');
 
-router.get('/user', userController.findUser);
+router.post('/login', userController.login);
+router.get('/session', userController.session);
 router.get('/users/:id', userController.getUser);
 router.get('/users', userController.getAllUsers);
 router.post('/users', userController.addUser);
