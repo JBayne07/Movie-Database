@@ -1,12 +1,19 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {Link} from 'react-router-dom';
 import { AppBar, Box, Toolbar, Typography, Button, IconButton} from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
+import {useSelector} from 'react-redux';
 
 export const Navbar = () => {
-  const test = () => {
-    console.log()
-  }
+  const [profile, setProfile] = useState(false);
+  const userData = useSelector(state => state.userdata);
+
+  useEffect(() =>{
+    if(userData._id){
+      setProfile(true);
+    }    
+  }, [userData]);
+
   return(
       <Box sx={{ flexGrow: 1 }}>
         <AppBar position="static">
@@ -23,26 +30,43 @@ export const Navbar = () => {
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
               Movie Database
             </Typography>
-            <Button variant="contained" color="inherit" onClick={test}>               
+            <Button variant="contained" color="inherit">               
                 <Link to='/' className='HomePage' color="inherit">
                   Home
                 </Link>
             </Button>
-            <Button variant="contained" color="inherit">               
-                <Link to='/profile' className='SortPage' color="inherit">
-                  Profile
-                </Link>
+            {
+            profile ? (
+            <Button variant="contained" color="inherit" >
+              <Link to='/profile' className='ProfilePage' color="inherit">
+                Profile
+              </Link>
             </Button>
-            <Button variant="contained" color="inherit">               
-                <Link to='/search' className='SortPage' color="inherit">
+            ) : (
+            <Button variant="contained" color="inherit" >
+              <Link to='/login' className='ProfilePage' color="inherit">
+                Profile
+              </Link>
+            </Button>
+            )}
+            
+            <Button variant="contained" color="inherit">
+                <Link to='/search' className='SearchPage' color="inherit">
                   Search
                 </Link>
             </Button>
-            <Button variant="contained" color="inherit">               
-                <Link to='/login' className='SortPage' color="inherit">
+            <Button variant="contained" color="inherit">
+                <Link to='/login' className='LoginPage' color="inherit">
                   Login
                 </Link>
             </Button>
+            {profile ? (
+            <Button variant="contained" color="inherit">               
+              <Link to='/logout' className='LoginPage' color="inherit">
+                Logout
+              </Link>
+            </Button>
+            ): null}
           </Toolbar>
         </AppBar>
       </Box>
