@@ -1,7 +1,7 @@
 import {TextField, Button} from '@mui/material';
 import {useState} from 'react';
-import {Link, Navigate} from 'react-router-dom'
-import {useDispatch, useSelector} from 'react-redux';
+import {Navigate} from 'react-router-dom'
+import {useDispatch} from 'react-redux';
 import {loginAction} from '../actions/index';
 const axios = require('axios');
 
@@ -10,7 +10,6 @@ export const Login = () => {
     const [password, setPassword] = useState('');
     const [isLogged, setLogged] = useState(false);
     const dispatch = useDispatch();
-    const userData = useSelector(state => state.userdata);
 
     const login = () =>{
         let options = {
@@ -32,7 +31,6 @@ export const Login = () => {
             dispatch(loginAction(response.data));
             if(response.data._id){
                 setLogged(true);
-                return <Navigate to='/profile'/>;
             }
         });        
     }
@@ -74,20 +72,20 @@ export const Login = () => {
 
     return(
         <>
-        {isLogged ? <Navigate to='/profile' /> : null}
-        <TextField id="username" label="Username" variant="filled" onChange={(event) => {setUsername(event.target.value)}} />
-        <br/>
-        <TextField id="password" label="Password" variant="filled" onChange={(event) => {setPassword(event.target.value)}}/>
-        <br/>
-        <Button variant='contained' color='inherit' onClick={login}>
-            Login
-        </Button>
-        <Button variant='contained' color='inherit' onClick={test}>
-            Test
-        </Button>
-        <Button variant='contained' color='inherit' onClick={addUser}>
-            Register
-        </Button>
+            {isLogged ? <Navigate to='/profile' /> : null}
+            <TextField id="username" label="Username" variant="filled" onChange={(event) => {setUsername(event.target.value)}} />
+            <br/>
+            <TextField id="password" label="Password" variant="filled" onChange={(event) => {setPassword(event.target.value)}}/>
+            <br/>
+            <Button variant='contained' color='inherit' onClick={login}>
+                Login
+            </Button>
+            <Button variant='contained' color='inherit' onClick={test}>
+                Test
+            </Button>
+            <Button variant='contained' color='inherit' onClick={addUser}>
+                Register
+            </Button>
         </>
     )    
 }
