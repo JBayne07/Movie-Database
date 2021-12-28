@@ -35,7 +35,7 @@ module.exports.getAllUsers = (req, res) => {
 
 module.exports.login = (req, res) => {
     console.log('login', req.body);
-
+    
     User.findOne({username:req.body.username, password:req.body.password}, function(err, result){
         if(err) return console.log(err);
         console.log(result);
@@ -44,9 +44,5 @@ module.exports.login = (req, res) => {
         console.log(req.session)
         res.status(200).json(result);
     });
-}
-
-module.exports.session = (req, res) => {
-    console.log('session', cookie);
-    res.status(200).json(cookie);
+  
 }

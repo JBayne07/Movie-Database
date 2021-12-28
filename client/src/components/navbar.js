@@ -2,17 +2,26 @@ import React, {useState, useEffect} from 'react';
 import {Link} from 'react-router-dom';
 import { AppBar, Box, Toolbar, Typography, Button, IconButton} from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
+import {logoutAction} from '../actions/index'
 
 export const Navbar = () => {
   const [profile, setProfile] = useState(false);
   const userData = useSelector(state => state.userdata);
-
+  const dispatch = useDispatch();
+  
   useEffect(() =>{
     if(userData._id){
       setProfile(true);
-    }    
+    }else{
+      setProfile(false);
+    }
   }, [userData]);
+
+  const logout = () => {
+    console.log('Logged out');
+    dispatch(logoutAction());
+  }
 
   return(
       <Box sx={{ flexGrow: 1 }}>
@@ -55,18 +64,19 @@ export const Navbar = () => {
                   Search
                 </Link>
             </Button>
-            <Button variant="contained" color="inherit">
+            {profile ? (
+              <Button variant="contained" color="inherit" onClick={logout}>               
+                <Link to='/login' className='LoginPage' color="inherit">
+                  Logout
+                </Link>
+              </Button>
+            ) : (
+              <Button variant="contained" color="inherit">
                 <Link to='/login' className='LoginPage' color="inherit">
                   Login
                 </Link>
-            </Button>
-            {profile ? (
-            <Button variant="contained" color="inherit">               
-              <Link to='/logout' className='LoginPage' color="inherit">
-                Logout
-              </Link>
-            </Button>
-            ): null}
+              </Button>
+            )}
           </Toolbar>
         </AppBar>
       </Box>
