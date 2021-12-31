@@ -37,8 +37,7 @@ for(let i = 0; i < 1; ++ i){
         }
         people[j].collaborated = arr;
     }
-
-    // console.log(people);
+    
     const options = {
         url: 'http://localhost:9000/api/movies',
             method: 'POST',

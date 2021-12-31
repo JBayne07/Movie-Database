@@ -1,6 +1,5 @@
 const Movie = require('../models/movieModel');
 const Person = require('../models/personModel');
-const mongoose = require('mongoose')
 
 const addPerson = async (p) => {
     let person = new Person({
@@ -30,11 +29,7 @@ const addingMovie = async (body,res) => {
             rated: body.rated,
             runtime: body.runtime,
             plot: body.plot,
-            genres: body.genres,
-            directors: [],
-            writers: [],
-            actors: [],
-            reviewRating: 0
+            genres: body.genres
         }
     );
 
@@ -55,7 +50,7 @@ const addingMovie = async (body,res) => {
                                     movie.actors.push(result._id);
 
                                     if(k === body.actors.length-1){
-                                        
+
                                         movie.save(function(err, result){        
                                             if(err) return console.log(err);
                                             console.log('saved movie', result);
@@ -70,32 +65,6 @@ const addingMovie = async (body,res) => {
             }
         });
     }
-
-    // let m = await Promise.all(body.directors.map(async element => {
-    //     Person.findOne({name: element}, function(err, result){
-    //         movie.directors.push(result._id);
-    //     });
-    // }));
-
-    // await Promise.all(body.writers.map(async element => {
-    //     Person.findOne({name: element}, function(err, result){
-    //         movie.writers.push(result._id);
-    //     });
-    // }));
-
-    // await Promise.all(body.actors.map(async element => {
-    //     Person.findOne({name: element}, function(err, result){
-    //         movie.actors.push(result._id);
-    //     });
-    // }));
-    
-    // setTimeout(() => {
-    //     movie.save(function(err, result){        
-    //         if(err) return console.log(err);
-    //         console.log('saved movie', result);
-    //         res.status(200).json(result);
-    //     });  
-    // }, 1000);    
 }
 
 module.exports.addMovie = async (req, res) => {
