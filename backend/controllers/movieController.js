@@ -38,31 +38,64 @@ const addingMovie = async (body,res) => {
         }
     );
 
-    let m = await Promise.all(body.directors.map(async element => {
-        Person.findOne({name: element}, function(err, result){
+    for(let i = 0; i < body.directors.length; ++i){
+        Person.findOne({name: body.directors[i]}, function(err, result){
             movie.directors.push(result._id);
-        });
-    }));
 
-    await Promise.all(body.writers.map(async element => {
-        Person.findOne({name: element}, function(err, result){
-            movie.writers.push(result._id);
-        });
-    }));
+            if(i === body.directors.length -1){
+                for(let j = 0; j < body.writers.length; ++j){
 
-    await Promise.all(body.actors.map(async element => {
-        Person.findOne({name: element}, function(err, result){
-            movie.actors.push(result._id);
+                    Person.findOne({name: body.writers[j]}, function(err, result){
+                        movie.writers.push(result._id);
+
+                        if(j === body.writers.length-1){
+                            for(let k = 0; k < body.actors.length; ++k){
+
+                                Person.findOne({name: body.actors[k]}, function(err, result){
+                                    movie.actors.push(result._id);
+
+                                    if(k === body.actors.length-1){
+                                        
+                                        movie.save(function(err, result){        
+                                            if(err) return console.log(err);
+                                            console.log('saved movie', result);
+                                            res.status(200).json(result);
+                                        });
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
+            }
         });
-    }));
+    }
+
+    // let m = await Promise.all(body.directors.map(async element => {
+    //     Person.findOne({name: element}, function(err, result){
+    //         movie.directors.push(result._id);
+    //     });
+    // }));
+
+    // await Promise.all(body.writers.map(async element => {
+    //     Person.findOne({name: element}, function(err, result){
+    //         movie.writers.push(result._id);
+    //     });
+    // }));
+
+    // await Promise.all(body.actors.map(async element => {
+    //     Person.findOne({name: element}, function(err, result){
+    //         movie.actors.push(result._id);
+    //     });
+    // }));
     
-    setTimeout(() => {
-        movie.save(function(err, result){        
-            if(err) return console.log(err);
-            console.log('saved movie', result);
-            res.status(200).json(result);
-        });  
-    }, 1000);    
+    // setTimeout(() => {
+    //     movie.save(function(err, result){        
+    //         if(err) return console.log(err);
+    //         console.log('saved movie', result);
+    //         res.status(200).json(result);
+    //     });  
+    // }, 1000);    
 }
 
 module.exports.addMovie = async (req, res) => {
