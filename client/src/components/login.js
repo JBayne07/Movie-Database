@@ -32,7 +32,7 @@ export const Login = () => {
             if(response.data._id){
                 setLogged(true);
             }
-        });        
+        });
     }
 
     const addUser = () =>{

@@ -1,7 +1,7 @@
 const movieData = require('./movie-data-10.json');
 const axios = require('axios');
 
-for(let i = 0; i < 1; ++ i){
+for(let i = 0; i < movieData.length; ++ i){
     // console.log(movieData[i]);
     movieData[i].Year = parseInt(movieData[i].Year)
     movieData[i].Runtime = parseInt(movieData[i].Runtime)
@@ -64,6 +64,7 @@ for(let i = 0; i < 1; ++ i){
 
     axios(options).then(response => {
         console.log(response.data);
+        console.log('All Done!');
     });
 }
 
@@ -79,5 +80,3 @@ for(let i = 0; i < 1; ++ i){
 // axios(options).then(response => {
 //     console.log(response.data);
 // });
-
-console.log('All Done!');

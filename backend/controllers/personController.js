@@ -13,12 +13,12 @@ module.exports.addPerson = (req, res) => {
 }
 
 module.exports.getPerson = (req, res) => {
-    console.log('getPerson',req.body);
+    console.log('getPerson',req.params);
 
     Person.findById(req.params.id, function(err, result){
         if(err) return console.log(result);
         console.log('got person', result);
-        res.status(200).json(person);
+        res.status(200).json(result);
     });
 }
 
