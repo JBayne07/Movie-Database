@@ -5,7 +5,7 @@ let totalPeople = [];
 
 let flag = false;
 
-for(let i = 0; i < 3; i++){
+for(let i = 0; i < 4; i++){
     // console.log(movieData[i]);
     movieData[i].Year = parseInt(movieData[i].Year)
     movieData[i].Runtime = parseInt(movieData[i].Runtime)
@@ -15,9 +15,9 @@ for(let i = 0; i < 3; i++){
 
     for(let j = 0; j < movieData[i].Director.length; ++j){
         let person = {};
-        let temp = {}
+        let person2 = {}
         person.name = movieData[i].Director[j];
-        temp.name = movieData[i].Director[j];
+        person2.name = movieData[i].Director[j];
 
         if(totalPeople.some(element => element.name === person.name)){
             multiPeople.push(person);
@@ -25,14 +25,14 @@ for(let i = 0; i < 3; i++){
         }
 
         people.push(person);
-        totalPeople.push(person);
+        totalPeople.push(person2);
     }
 
     for(let j = 0; j < movieData[i].Writer.length; ++j){
         let person = {};
-        let temp = {}
+        let person2 = {}
         person.name = movieData[i].Writer[j];
-        temp.name = movieData[i].Writer[j];
+        person2.name = movieData[i].Writer[j];
 
         if(people.some(element => element.name === person.name)){
             continue;
@@ -43,14 +43,14 @@ for(let i = 0; i < 3; i++){
         }
               
         people.push(person);
-        totalPeople.push(person);
+        totalPeople.push(person2);
     }
 
     for(let j = 0; j < movieData[i].Actors.length; ++j){
         let person = {};
-        let temp = {}
+        let person2 = {}
         person.name = movieData[i].Actors[j];
-        temp.name = movieData[i].Actors[j];
+        person2.name = movieData[i].Actors[j];
 
         if(people.some(element => element.name === person.name)){
             continue;
@@ -60,37 +60,60 @@ for(let i = 0; i < 3; i++){
             flag = true;
         }
         
-        
         people.push(person);
-        totalPeople.push(person);
+        totalPeople.push(person2);
     }
 
     
     
     for(let j = 0; j < people.length; ++j){
         let map = new Map();
+        // let map2 = new Map();
         for(let k = 0; k < people.length; ++k){
             if(j === k){
                 continue;
             }
 
             map.set(people[k].name, 1);
+            // map2.set(totalPeople[k].name, 1);
         }
+        // console.log(map2);
         people[j].collaborated = map;
+        // totalPeople[j].collaborated = map2;
     }
 
+    for(let j = totalPeople.length-people.length; j < totalPeople.length; ++j){
+        let map2 = new Map();
+        for(let k = totalPeople.length-people.length; k < totalPeople.length; ++k){
+            if(j === k){
+                continue;
+            }
+            map2.set(totalPeople[k].name, 1);
+        }
+        totalPeople[j].collaborated = map2
+    }
 
+    // console.log(totalPeople);
 
     if(flag){
         for(let j = 0; j < multiPeople.length; ++j){
-            let topFiveMap = new Map();
             let tempArr = [];
             
             for(let k = 0; k < totalPeople.length; ++k){
                 if(totalPeople[k].name === multiPeople[j].name){
-                    tempArr.push(Object.assign({},totalPeople[k]));
-                    // tempArr.push(totalPeople[k]);
+                    const iterator = totalPeople[k].collaborated.keys();
+                    let temp = {};
 
+                    temp.name = totalPeople[k].name;
+                    temp.collaborated = new Map();
+
+                    for(let l = 0; l < totalPeople[k].collaborated.size; ++l){
+                        const value = iterator.next().value
+                        temp.collaborated.set(value,totalPeople[k].collaborated.get(value))
+                    }
+
+                    tempArr.push(temp);
+                    // console.log('\n\n');
                     // let temp = totalPeople[k].collaborated;
                     // for(let l = 0; l < totalPeople[k].collaborated.length; ++l){
                     //     if(arr.length < 5){
@@ -109,9 +132,10 @@ for(let i = 0; i < 3; i++){
                     // console.log(temp);
                 }
             }
+
             //problem is the map is being sent by reference each time need to figure out a way to deep copy
             let merged = tempArr[0].collaborated;
-            console.log(tempArr);
+            // console.log(tempArr);
             for(let k = 1; k < tempArr.length; ++k){
                 tempArr[k].collaborated.forEach((value, key) =>{
                     // console.log('------------------',key,merged);
@@ -122,13 +146,20 @@ for(let i = 0; i < 3; i++){
                     }                    
                 });
             }
-            
-            
 
-            console.log(merged);
+            let sortedMap = new Map([...merged.entries()].sort((a,b) => b[1] -a[1]));
+            // console.log(sortedMap);
+            let topFive = Array.from(sortedMap).slice(0,5);
+            let topFiveMap = new Map(topFive);
+            // console.log(tempArr[0].name);
+            // console.log(topFiveMap);
+            // tempArr[0].collaborated = topFiveMap;
 
-
-            // console.log(arr);          
+            for(let k = 0; k < people.length; ++k){
+                if(people[k].name === tempArr[0].name){
+                    people[k].collaborated = topFiveMap;
+                }
+            }
         }
     }
     
@@ -136,7 +167,7 @@ for(let i = 0; i < 3; i++){
     
 
     console.log(flag);
-    // console.log(people);
+    console.log(people);
     // console.log(totalPeople);
     // console.log(multiPeople);
     flag = false;
