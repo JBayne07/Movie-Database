@@ -5,7 +5,7 @@ let totalPeople = [];
 
 let flag = false;
 
-for(let i = 0; i < 4; i++){
+for(let i = 0; i < 3; i++){
     // console.log(movieData[i]);
     movieData[i].Year = parseInt(movieData[i].Year)
     movieData[i].Runtime = parseInt(movieData[i].Runtime)
@@ -17,6 +17,7 @@ for(let i = 0; i < 4; i++){
         let person = {};
         let person2 = {}
         person.name = movieData[i].Director[j];
+        person.directed = movieData[i].Title;
         person2.name = movieData[i].Director[j];
 
         if(totalPeople.some(element => element.name === person.name)){
@@ -32,6 +33,7 @@ for(let i = 0; i < 4; i++){
         let person = {};
         let person2 = {}
         person.name = movieData[i].Writer[j];
+        person.written = movieData[i].Title;
         person2.name = movieData[i].Writer[j];
 
         if(people.some(element => element.name === person.name)){
@@ -50,6 +52,7 @@ for(let i = 0; i < 4; i++){
         let person = {};
         let person2 = {}
         person.name = movieData[i].Actors[j];
+        person.acted = movieData[i].Title;
         person2.name = movieData[i].Actors[j];
 
         if(people.some(element => element.name === person.name)){
@@ -97,7 +100,8 @@ for(let i = 0; i < 4; i++){
 
     if(flag){
         for(let j = 0; j < multiPeople.length; ++j){
-            let tempArr = [];
+            let multiArr = [];
+            let otherArr = [];
             
             for(let k = 0; k < totalPeople.length; ++k){
                 if(totalPeople[k].name === multiPeople[j].name){
@@ -112,7 +116,7 @@ for(let i = 0; i < 4; i++){
                         temp.collaborated.set(value,totalPeople[k].collaborated.get(value))
                     }
 
-                    tempArr.push(temp);
+                    multiArr.push(temp);
                     // console.log('\n\n');
                     // let temp = totalPeople[k].collaborated;
                     // for(let l = 0; l < totalPeople[k].collaborated.length; ++l){
@@ -134,10 +138,10 @@ for(let i = 0; i < 4; i++){
             }
 
             //problem is the map is being sent by reference each time need to figure out a way to deep copy
-            let merged = tempArr[0].collaborated;
-            // console.log(tempArr);
-            for(let k = 1; k < tempArr.length; ++k){
-                tempArr[k].collaborated.forEach((value, key) =>{
+            let merged = multiArr[0].collaborated;
+            // console.log multiArr);
+            for(let k = 1; k < multiArr.length; ++k){
+                multiArr[k].collaborated.forEach((value, key) =>{
                     // console.log('------------------',key,merged);
                     if(merged.has(key)){
                         merged.set(key, merged.get(key)+1);
@@ -151,56 +155,77 @@ for(let i = 0; i < 4; i++){
             // console.log(sortedMap);
             let topFive = Array.from(sortedMap).slice(0,5);
             let topFiveMap = new Map(topFive);
-            // console.log(tempArr[0].name);
-            // console.log(topFiveMap);
-            // tempArr[0].collaborated = topFiveMap;
+            let topFiveArr = [];
+
+            const iterator = topFiveMap.keys();
+            let value = iterator.next().value;
+            while(value !== undefined){
+                topFiveArr.push(value);
+                value = iterator.next().value
+            }
 
             for(let k = 0; k < people.length; ++k){
-                if(people[k].name === tempArr[0].name){
-                    people[k].collaborated = topFiveMap;
+                if(people[k].name === multiArr[0].name){
+                    people[k].collaborated = topFiveArr;
                 }
             }
+        }
+    }
+
+    for(let j = 0; j < people.length; ++j){
+        if(!(multiPeople.some(element => element.name === people[j].name))){
+            let sortedMap = new Map([...people[j].collaborated.entries()].sort((a,b) => b[1] -a[1]));
+            let topFive = Array.from(sortedMap).slice(0,5);
+            let topFiveMap = new Map(topFive);
+            let topFiveArr = [];
+            const iterator = topFiveMap.keys();
+            let value = iterator.next().value;
+            while(value !== undefined){
+                topFiveArr.push(value);
+                value = iterator.next().value
+            }
+            people[j].collaborated = topFiveArr;
         }
     }
     
 
     
 
-    console.log(flag);
+    console.log('\n\n',flag);
     console.log(people);
     // console.log(totalPeople);
     // console.log(multiPeople);
     flag = false;
 
     
-    // const options = {
-    //     url: 'http://localhost:9000/api/movies',
-    //         method: 'POST',
-    //         headers: {
-    //             'Accept' : 'application/json',
-    //             'Content-Type' : 'application/json;charset=UTF-8'
-    //         },
-    //         data:{
-    //             title       : movieData[i].Title,
-    //             releaseYr   : movieData[i].Year,
-    //             rated       : movieData[i].Rated,
-    //             releaseDate : movieData[i].Released,
-    //             runtime     : movieData[i].Runtime,
-    //             plot        : movieData[i].Plot,
-    //             awards      : movieData[i].Awards,
-    //             poster      : movieData[i].Poster,
-    //             genres      : movieData[i].Genre,
-    //             directors   : movieData[i].Director,
-    //             writers     : movieData[i].Writer,
-    //             actors      : movieData[i].Actors,
-    //             peopleArr   : people
-    //         }
-    // }
+    const options = {
+        url: 'http://localhost:9000/api/movies',
+            method: 'POST',
+            headers: {
+                'Accept' : 'application/json',
+                'Content-Type' : 'application/json;charset=UTF-8'
+            },
+            data:{
+                title       : movieData[i].Title,
+                releaseYr   : movieData[i].Year,
+                rated       : movieData[i].Rated,
+                releaseDate : movieData[i].Released,
+                runtime     : movieData[i].Runtime,
+                plot        : movieData[i].Plot,
+                awards      : movieData[i].Awards,
+                poster      : movieData[i].Poster,
+                genres      : movieData[i].Genre,
+                directors   : movieData[i].Director,
+                writers     : movieData[i].Writer,
+                actors      : movieData[i].Actors,
+                peopleArr   : people
+            }
+    }
 
-    // axios(options).then(response => {
-    //     console.log(response.data);
-    //     console.log('All Done!');
-    // });
+    axios(options).then(response => {
+        console.log(response.data);
+        console.log('All Done!');
+    });
 }
 
 // const options = {
