@@ -5,7 +5,7 @@ let totalPeople = [];
 
 let flag = false;
 
-for(let i = 0; i < 3; i++){
+for(let i = 0; i < movieData.length; i++){
     // console.log(movieData[i]);
     movieData[i].Year = parseInt(movieData[i].Year)
     movieData[i].Runtime = parseInt(movieData[i].Runtime)
@@ -65,9 +65,7 @@ for(let i = 0; i < 3; i++){
         
         people.push(person);
         totalPeople.push(person2);
-    }
-
-    
+    }    
     
     for(let j = 0; j < people.length; ++j){
         let map = new Map();
@@ -117,23 +115,6 @@ for(let i = 0; i < 3; i++){
                     }
 
                     multiArr.push(temp);
-                    // console.log('\n\n');
-                    // let temp = totalPeople[k].collaborated;
-                    // for(let l = 0; l < totalPeople[k].collaborated.length; ++l){
-                    //     if(arr.length < 5){
-                    //         arr.push(totalPeople[k].collaborated[l]);
-                    //     }else{
-                    //         let arrCount = 0;
-                    //         for(let p = 0; p < totalPeople[k].collaborated.length; ++p){
-                    //             if(totalPeople[k].collaborated[l] === totalPeople[k].collaborated[p]){
-                    //                 totalPeople[k].collaborated.get(totalPeople[k].name)++;
-                    //             }
-                    //             console.log(k,totalPeople[k].collaborated[l],totalPeople[k].collaborated[p]);
-                    //         }
-                    //         temp.set(totalPeople[k].collaborated[l], arrCount);
-                    //     }
-                    // }
-                    // console.log(temp);
                 }
             }
 
@@ -227,16 +208,3 @@ for(let i = 0; i < 3; i++){
         console.log('All Done!');
     });
 }
-
-// const options = {
-//     url: 'http://localhost:9000/api/movies/61caf47d0853ecb4515e87ec',
-//         method: 'GET',
-//         headers: {
-//             'Accept' : 'application/json',
-//             'Content-Type' : 'application/json;charset=UTF-8'
-//         }
-//     }
-
-// axios(options).then(response => {
-//     console.log(response.data);
-// });

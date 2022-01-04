@@ -15,7 +15,14 @@ module.exports.addPerson = (req, res) => {
 module.exports.getPerson = (req, res) => {
     console.log('getPerson',req.params);
 
-    Person.findById(req.params.id, function(err, result){
+    Person.findById(req.params.id
+        // )
+    // .populate('directed'
+    // )
+    // .populate('written')
+    // .populate('acted')
+    // .populate('collaborators'
+    , function(err, result){
         if(err) return console.log(result);
         console.log('got person', result);
         res.status(200).json(result);

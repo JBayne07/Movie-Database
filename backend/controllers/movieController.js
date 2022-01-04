@@ -1,42 +1,24 @@
 const Movie = require('../models/movieModel');
 const Person = require('../models/personModel');
 
-const addPerson = async (p) => {
-    Person.findOne({name: p.name}, function(err, result){
-        
-        if(result !== null){
-            let arr = [];
-            // for(let i = 0; i < p.collaborated.length; ++i){
-            //     Person.findOne({name: p.collaborated[i]}, function(err, result){
-                    
-            //         arr.push(result._id);
-            //         if(i === p.collaborated.length-1){
-            //             Person.findOneAndUpdate({name: element.name}, {collaborators: arr}, function(err, result){
-            //                 console.log(result);
-            //             });
-            //         }
-            //     })
-            // }
-        }else{
+const addingPeople = async (body) => {
+    let people = body.peopleArr;
+
+    for(let element of people){
+        let timeout = await new Promise(resolve => setTimeout(resolve,100));
+        let result = await Person.findOne({name: element.name}).exec();
+        console.log('-----------------------',element.name,result);
+        if(result === null){
             let person = new Person({
-                name: p.name,
+                name: element.name,
             });
         
             person.save(function(err, result){
                 if(err) return console.log(err);
-                // console.log('person save', result);
-                return result
+                console.log('person save', result);
             });
         }
-    })
-    
-}
-
-const addingPeople = async (body) => {
-    let people = body.peopleArr;
-    people.map((element) => {
-        addPerson(element);
-    });
+    }
 }
 
 const addingMovie = async (body,res) => {
@@ -46,93 +28,77 @@ const addingMovie = async (body,res) => {
             title: body.title,
             releaseYr: body.releaseYr,
             rated: body.rated,
+            releaseDate: body.releaseDate,
             runtime: body.runtime,
             plot: body.plot,
+            awards: body.awards,
+            poster: body.poster,
             genres: body.genres
         }
     );
 
-    for(let i = 0; i < body.directors.length; ++i){
-        Person.findOne({name: body.directors[i]}, function(err, result){
-            if(err) return console.log(err);
-            movie.directors.push(result._id);
-
-            if(i === body.directors.length -1){
-                for(let j = 0; j < body.writers.length; ++j){
-
-                    Person.findOne({name: body.writers[j]}, function(err, result){
-                        movie.writers.push(result._id);
-
-                        if(j === body.writers.length-1){
-                            for(let k = 0; k < body.actors.length; ++k){
-
-                                Person.findOne({name: body.actors[k]}, function(err, result){
-                                    movie.actors.push(result._id);
-
-                                    if(k === body.actors.length-1){
-
-                                        movie.save(function(err, result){        
-                                            if(err) return console.log(err);
-                                            // console.log('saved movie', result);
-                                            updatePeople(body);
-                                            res.status(200).json(result);                                            
-                                        });
-                                    }
-                                });
-                            }
-                        }
-                    });
-                }
-            }
-        });
+    for(let element of body.directors){
+        const result = await Person.findOne({name: element}).exec();
+        // console.log(result);
+        movie.directors.push(result._id);
     }
+
+    for(let element of body.writers){
+        const result = await Person.findOne({name: element}).exec();
+        // console.log('writer');
+        movie.writers.push(result._id);
+    }
+
+    for(let element of body.actors){
+        const result = await Person.findOne({name: element}).exec();
+        // console.log('actor');
+        movie.actors.push(result._id);
+    }
+
+    movie.save((err, result) => {
+        if(err) return console.log(err);
+        // console.log('saved movie', result);
+        updatePeople(body);
+        res.status(200).json(result);
+    });
 }
 
-const updatePeople = (body) => {
+const updatePeople = async (body) => {
     let people = body.peopleArr;
-    Movie.findOne({title: body.title}, function(err, result){
-        if(err) return console.log(err);
-        Promise.all(people.map(async element => {
-            
-            if(element.directed){                         
-                Person.findOneAndUpdate({name: element.name}, {$push:{directed: result._id}}, function(err, result){
-                    // console.log(result);
-                });
-            }else if(element.written){                
-                Person.findOneAndUpdate({name: element.name}, {$push:{written: result._id}}, function(err, result){
-                    // console.log(result);
-                })
-            }else if(element.acted){                
-                Person.findOneAndUpdate({name: element.name}, {$push:{acted: result._id}}, function(err, result){
-                    // console.log(result);
-                })
-            }            
-        }));
-    })
-    
-    people.map(async element => {
-        console.log(element.collaborated);
-        let arr = [];
-        for(let i = 0; i < element.collaborated.length; ++i){
-            Person.findOne({name: element.collaborated[i]}, function(err, result){
-                console.log('-------',element.name, '||',element.collaborated[i], result._id)
-                arr.push(result._id);
-                if(i === element.collaborated.length-1){
-                    Person.findOneAndUpdate({name: element.name}, {collaborators: arr}, function(err, result){
-                        // console.log('added collaborators', result);
-                    });
-                }
-            })
+    const movieResult = Movie.findOne({title: body.title}).exec();
+    Promise.all(people.map(async element => {
+        
+        if(element.directed){
+            const directedResult = await Person.findOneAndUpdate({name: element.name}, {$push:{directed: movieResult._id}}).exec();
+        }else if(element.written){
+            const writtenResult = await Person.findOneAndUpdate({name: element.name}, {$push:{written: movieResult._id}}).exec();
+        }else if(element.acted){
+            const actedResult = await Person.findOneAndUpdate({name: element.name}, {$push:{acted: movieResult._id}}).exec();
         }
-    });
+
+    }));
+
+    for (const person of people) {
+        let arr = [];
+        let count = 0;
+        for(let element of person.collaborated){
+            const personResult = await Person.findOne({name: element}).exec();
+            arr.push(personResult._id);
+            count++;
+
+            if(count === person.collaborated.length){
+                const updateResult = await Person.findOneAndUpdate({name: person.name}, {collaborators:arr}).exec();
+            }
+        }        
+    }
 }
 
 module.exports.addMovie = async (req, res) => {
     // console.log('addMovie', req.body);
-    await addingPeople(req.body, res);
-    setTimeout(() =>{
-        addingMovie(req.body,res);
-    }, 900)
+    await addingPeople(req.body);
+    // setTimeout(() =>{
+    await addingMovie(req.body,res);
+    // }, 1000)
     
 }
 
@@ -149,7 +115,10 @@ module.exports.getAllMovies = async (req, res) => {
 module.exports.getMovie = async (req, res) => {
     console.log('getmovie', req.body);
     
-    Movie.findById(req.params.id, function(err, result){
+    Movie.findById(req.params.id)
+    .populate('directors')
+    .populate('writers')
+    .populate('actors', function(err, result){
         if(err) return console.log(err);
         console.log(result);
         res.status(200).json(result);
