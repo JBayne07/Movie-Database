@@ -65,7 +65,8 @@ const addingMovie = async (body,res) => {
 
 const updatePeople = async (body) => {
     let people = body.peopleArr;
-    const movieResult = Movie.findOne({title: body.title}).exec();
+    const movieResult = await Movie.findOne({title: body.title}).exec();
+
     Promise.all(people.map(async element => {
         
         if(element.directed){
@@ -103,22 +104,57 @@ module.exports.addMovie = async (req, res) => {
 }
 
 module.exports.getAllMovies = async (req, res) => {
-    console.log('getAllMovies', req.body);
+    console.log('getAllMovies', req.query);
 
-    Movie.find(function(err, result){
-        if(err) return console.log(err);
-        console.log(result);
-        res.status(200).json(result);
-    });
+
+    await Movie.find({$and:[
+        {title: new RegExp(req.query.title,'i')},
+        {genres: new RegExp(req.query.genre, 'i')}
+        ]})
+        .populate(
+            // {$and:[
+                {path:'directors',
+                match: {name: new RegExp(req.query.name, 'i')}}
+
+                // {path:'writers',
+                // match: {name: new RegExp(req.query.name, 'i')}},
+
+                // {path: 'actors',
+                // match: {name: new RegExp(req.query.name, 'i')}}
+            // ]}
+        )
+        .populate(
+            {path:'writers',
+            match: {name: new RegExp(req.query.name, 'i')}}
+        )
+        .populate(
+            {path: 'actors',
+            match: {name: new RegExp(req.query.name, 'i')}}
+        )
+        .exec((err, result) => {
+            let temp1 = result.filter(element => {return element.directors.length !== 0;});
+            let temp2 = result.filter(element => {return element.writers.length !== 0;});
+            let temp3 = result.filter(element => {return element.actors.length !== 0;});
+            if(temp1.length !== 0){
+                result = temp1;
+            }else if(temp2.length !== 0){
+                result = temp2;
+            }else if(temp3.length !== 0){
+                result = temp3;
+            }
+            // console.log(result);
+            res.status(200).json(result);
+        });
 }
 
 module.exports.getMovie = async (req, res) => {
-    console.log('getmovie', req.body);
+    console.log('getmovie', req.params);
     
     Movie.findById(req.params.id)
     .populate('directors')
     .populate('writers')
-    .populate('actors', function(err, result){
+    .populate('actors')
+    .exec(function(err, result){
         if(err) return console.log(err);
         console.log(result);
         res.status(200).json(result);

@@ -25,6 +25,7 @@ export const Profile = () => {
             <h1> Username: {userData.username} </h1>
             
             <h1>People</h1>
+
             {userData.people.map(element =>{
                 return(
                     <>
@@ -37,6 +38,7 @@ export const Profile = () => {
             })}
 
             <h1>Movies</h1>
+            
             {userData.movies.map(element => {
                 return(
                     <>
