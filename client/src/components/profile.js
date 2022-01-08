@@ -25,7 +25,19 @@ export const Profile = () => {
             {userData ? (
                 <>
                     <h1> Username: {userData.username} </h1>
-            
+
+                    <h3>Users</h3>
+
+                    {userData.users.map(element => {
+                        return(
+                            <>
+                                <Link to={'/user/'+element._id.toString()} className='User' color="inherit">
+                                    {element.username}
+                                </Link>
+                            </>
+                        )
+                    })}
+
                     <h3>People</h3>
 
                     {userData.people.map(element =>{

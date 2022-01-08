@@ -8,6 +8,7 @@ const userSchema = new Schema({
     users: [{type: Schema.Types.ObjectId, ref: 'User'}],
     people: [{type: Schema.Types.ObjectId, ref: 'Person'}],
     movies: [{type: Schema.Types.ObjectId, ref: 'Movie'}],
+    reviews: [{type: Schema.Types.ObjectId, ref:'Review'}],
     recommendedMovies: [{type: Schema.Types.ObjectId, ref: 'Movie'}]
 });
 

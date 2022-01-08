@@ -157,7 +157,7 @@ export const Movie = () =>{
                         return(
                             <>
                                 <p>{element.score}</p>
-                                {element.user?(
+                                    {element.user?(
                                     <>
                                         <Link to={'/user/'+element.user._id.toString()} className='User' color="inherit">
                                             {element.user.username}

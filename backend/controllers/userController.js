@@ -20,7 +20,9 @@ module.exports.getUser = (req, res) => {
 
     User.findById(req.params.id)
     .populate('movies')
-    .populate('people').exec((err, result) => {
+    .populate('people')
+    .populate('reviews')
+    .exec((err, result) => {
         if(err) return console.log(err);
         console.log('result: ',result);
         res.status(200).json(result);
@@ -43,6 +45,7 @@ module.exports.login = (req, res) => {
     User.findOne({username:req.body.username, password:req.body.password})
     .populate('movies')
     .populate('people')
+    .populate('users')
     .exec(function(err, result){
         if(err) return console.log(err);
         // console.log(result);
@@ -66,4 +69,32 @@ module.exports.removeWatchlist = async (req, res) => {
     console.log(req.session);
     let result = await User.findByIdAndUpdate(req.session.userId, {$pull:{movies:req.params.id}});
     res.status(200).json(result); 
+}
+
+module.exports.followPerson = async (req, res) => {
+    console.log('followperson', req.params);
+    console.log(req.session);
+    let result = await User.findByIdAndUpdate(req.session.userId, {$push:{people:req.params.id}});
+    res.status(200).json(result);
+}
+
+module.exports.unfollowPerson = async (req, res) => {
+    console.log('unfollowperson', req.params);
+    console.log(req.session);
+    let result = await User.findByIdAndUpdate(req.session.userId, {$pull:{people:req.params.id}});
+    res.status(200).json(result);
+}
+
+module.exports.followUser = async (req, res) => {
+    console.log('followuser', req.params);
+    console.log(req.session);
+    let result = await User.findByIdAndUpdate(req.session.userId, {$push:{users:req.params.id}});
+    res.status(200).json(result);
+}
+
+module.exports.unfollowUser = async (req, res) => {
+    console.log('unfollowuser', req.params);
+    console.log(req.session);
+    let result = await User.findByIdAndUpdate(req.session.userId, {$pull:{users:req.params.id}});
+    res.status(200).json(result);
 }

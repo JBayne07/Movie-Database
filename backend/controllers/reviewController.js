@@ -1,5 +1,6 @@
 const Review = require('../models/reviewModel');
 const Movie = require('../models/movieModel');
+const User = require('../models/userModel');
 
 module.exports.addReview = async (req, res) => {
     console.log('add review', req.body);
@@ -14,10 +15,9 @@ module.exports.addReview = async (req, res) => {
         await review.save(async (err, result) => {
             if(err) return console.log(err);
             const movieResult = await Movie.findByIdAndUpdate(req.body.movieId, {$push:{reviews: result._id}}).exec();
+            const userResult = await User.findByIdAndUpdate(req.session.userId, {$push:{reviews: result._id}}).exec();
             console.log(result);
-            console.log(movieResult);
-    
-    
+            console.log(movieResult);    
             res.status(200).json(movieResult);
         });
     }else{

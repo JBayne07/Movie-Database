@@ -24,3 +24,31 @@ export const removeWatchList = (movieData) => {
         payload: movieData        
     };
 };
+
+export const followPerson = (personData) => {
+    return{
+        type:'FOLLOWPERSON',
+        payload: personData
+    };
+};
+
+export const unfollowPerson = (personData) => {
+    return{
+        type:'UNFOLLOWPERSON',
+        payload: personData
+    };
+};
+
+export const followUser = (userData) => {
+    return{
+        type:'FOLLOWUSER',
+        payload: userData
+    };
+};
+
+export const unfollowUser = (userData) => {
+    return{
+        type:'UNFOLLOWUSER',
+        payload: userData
+    };
+};

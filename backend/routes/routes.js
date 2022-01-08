@@ -12,6 +12,10 @@ router.get('/users', userController.getAllUsers);
 router.post('/users', userController.addUser);
 router.post('/users/watchlist/:id', userController.addWatchlist);
 router.put('/users/watchlist/:id', userController.removeWatchlist);
+router.post('/users/followperson/:id', userController.followPerson);
+router.put('/users/unfollowperson/:id', userController.unfollowPerson);
+router.post('/users/followuser/:id', userController.followUser);
+router.put('/users/unfollowuser/:id', userController.unfollowUser);
 
 router.get('/movies/:id', movieController.getMovie);
 router.get('/movies', movieController.getAllMovies);
