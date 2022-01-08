@@ -20,7 +20,7 @@ module.exports.getUser = (req, res) => {
 
     User.findById(req.params.id)
     .populate('movies')
-    .populate('people', function(err, result){
+    .populate('people').exec((err, result) => {
         if(err) return console.log(err);
         console.log('result: ',result);
         res.status(200).json(result);
@@ -45,10 +45,25 @@ module.exports.login = (req, res) => {
     .populate('people')
     .exec(function(err, result){
         if(err) return console.log(err);
-        console.log(result);
+        // console.log(result);
         req.session.userId = result._id.toString();
+        // result.session = req.session;
         cookie = req.session;
-        console.log(req.session)
+        console.log(req.session);
         res.status(200).json(result);
     });  
+}
+
+module.exports.addWatchlist = async (req, res) => {
+    console.log('addWatchlist', req.params);
+    console.log(req.session);
+    let result = await User.findByIdAndUpdate(req.session.userId, {$push:{movies:req.params.id}});
+    res.status(200).json(result); 
+}
+
+module.exports.removeWatchlist = async (req, res) => {
+    console.log('removeWatchlist', req.params);
+    console.log(req.session);
+    let result = await User.findByIdAndUpdate(req.session.userId, {$pull:{movies:req.params.id}});
+    res.status(200).json(result); 
 }

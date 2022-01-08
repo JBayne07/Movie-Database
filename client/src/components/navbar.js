@@ -44,7 +44,12 @@ export const Navbar = () => {
                   Home
                 </Link>
             </Button>
-            {
+            <Button variant="contained" color="inherit" >
+              <Link to='/profile' className='ProfilePage' color="inherit">
+                Profile
+              </Link>
+            </Button>
+            {/* {
             profile ? (
             <Button variant="contained" color="inherit" >
               <Link to='/profile' className='ProfilePage' color="inherit">
@@ -57,7 +62,7 @@ export const Navbar = () => {
                 Profile
               </Link>
             </Button>
-            )}
+            )} */}
             
             <Button variant="contained" color="inherit">
                 <Link to='/search' className='SearchPage' color="inherit">

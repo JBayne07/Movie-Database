@@ -10,3 +10,17 @@ export const logoutAction = () => {
         type: 'LOGOUT'
     };
 };
+
+export const addWatchList = (movieData) => {
+    return{
+        type:'ADDWATCHLIST',
+        payload: movieData        
+    };
+};
+
+export const removeWatchList = (movieData) => {
+    return{
+        type:'REMOVEWATCHLIST',
+        payload: movieData        
+    };
+};

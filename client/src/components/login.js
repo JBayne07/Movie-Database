@@ -19,6 +19,7 @@ export const Login = () => {
                 'Accept' : 'application/json',
                 'Content-Type' : 'application/json;charset=UTF-8'
             },
+            withCredentials: true,
             data:{
                 username: username,
                 password: password

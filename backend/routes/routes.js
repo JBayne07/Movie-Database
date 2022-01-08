@@ -10,6 +10,8 @@ router.post('/login', userController.login);
 router.get('/users/:id', userController.getUser);
 router.get('/users', userController.getAllUsers);
 router.post('/users', userController.addUser);
+router.post('/users/watchlist/:id', userController.addWatchlist);
+router.put('/users/watchlist/:id', userController.removeWatchlist);
 
 router.get('/movies/:id', movieController.getMovie);
 router.get('/movies', movieController.getAllMovies);
@@ -18,5 +20,7 @@ router.post('/movies', movieController.addMovie);
 router.get('/people/:id', personController.getPerson);
 router.get('/people', personController.getAllPeople);
 router.post('/people', personController.addPerson);
+
+router.post('/reviews', reviewController.addReview);
 
 module.exports = router;

@@ -14,7 +14,8 @@ const movieSchema = new Schema({
     directors: [{type: Schema.Types.ObjectId, ref: 'Person'}],
     writers: [{type: Schema.Types.ObjectId, ref: 'Person'}],
     actors: [{type: Schema.Types.ObjectId, ref: 'Person'}],
-    reviewRating: Number
+    similar: [{type: Schema.Types.ObjectId, ref: 'Movie'}],
+    reviews: [{type: Schema.Types.ObjectId, ref: 'Review'}]
 });
 
 const Movie = module.exports = mongoose.model('Movie', movieSchema);

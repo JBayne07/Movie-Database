@@ -3,6 +3,7 @@ import {Login} from './components/login';
 import {Search} from './components/search';
 import {Person} from './components/person';
 import {Movie} from './components/movie';
+import {User} from './components/user';
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 
@@ -17,6 +18,7 @@ export const NavRoutes = () => {
                 <Route exact path = '/search' element={<Search/>}/>
                 <Route exact path = '/person/:id' element={<Person/>}/>
                 <Route exact path = '/movie/:id' element={<Movie/>}/>
+                <Route exact path = '/user/:id' element={<User/>}/>
             </Routes>
         </>
     )

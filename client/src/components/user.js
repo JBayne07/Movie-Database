@@ -1,28 +1,33 @@
-import React from 'react';
-import {Link, Navigate} from 'react-router-dom';
-import {useSelector} from 'react-redux';
+import React, {useEffect, useState} from 'react';
+import {Link, useParams} from 'react-router-dom';
+const axios = require('axios');
 
-export const Profile = () => {
-    const userData = useSelector(state => state.userdata)
+export const User = () => {
+    const [visible, setVisibility] = useState(false);
+    const [userData, setData] = useState({});
+    const params = useParams();
 
-    // useEffect(()=>{
-    //     const options = {
-    //         url: 'http://localhost:9000/api/users',
-    //         method: 'GET',
-    //         headers: {
-    //             'Accept' : 'application/json',
-    //             'Content-Type' : 'application/json;charset=UTF-8'
-    //         }
-    //     }
+    useEffect(() => {
+        let options = {
+            url: 'http://localhost:9000/api/users/'+params.id,
+            method: 'GET',
+            headers: {
+                'Accept' : 'application/json',
+                'Content-Type' : 'application/json;charset=UTF-8'
+            },
+        };
 
-    //     axios(options).then(response =>{
-    //         console.log(response.data);
-    //     });
-    // },[])
-
+        axios(options).then(response => {
+            console.log(response.status);
+            console.log(response.data);
+            setData(response.data);
+            setVisibility(true);
+        });
+    }, [params]);
+    
     return(
         <>
-            {userData ? (
+            {visible ? (
                 <>
                     <h1> Username: {userData.username} </h1>
             
@@ -52,7 +57,7 @@ export const Profile = () => {
                         )
                     })}
                 </>
-            ): <Navigate to='/login'/>}            
+            ): null}
         </>
     )
 }

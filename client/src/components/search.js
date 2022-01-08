@@ -1,4 +1,5 @@
 import {useEffect, useState} from 'react';
+import {Link} from 'react-router-dom';
 import {TextField, Button} from '@mui/material';
 const axios = require('axios');
 
@@ -40,11 +41,11 @@ export const Search = () => {
     }, [searchTitle, searchName, searchGenre]);
 
     const nextPage = () => {
-
+        console.log('next')
     }
 
     const previousPage = () => {
-
+        console.log('previous')
     }
 
     return(
@@ -62,7 +63,12 @@ export const Search = () => {
 
             {visible? (searchData.map(element => {
                 return(
-                    <p>{element.title}</p>
+                    <>
+                        <Link to={'/movie/'+element._id.toString()} className='Movie' color="inherit">
+                                {element.title}
+                        </Link>
+                        <br/>
+                    </>
                 )
             })):null}
 

@@ -154,7 +154,11 @@ module.exports.getMovie = async (req, res) => {
     .populate('directors')
     .populate('writers')
     .populate('actors')
-    .exec(function(err, result){
+    .populate({
+        path:'reviews',
+        populate:{ path: 'user' }
+    })
+    .exec((err, result) => {
         if(err) return console.log(err);
         console.log(result);
         res.status(200).json(result);
