@@ -1,13 +1,180 @@
 const Movie = require('../models/movieModel');
 const Person = require('../models/personModel');
 
+
+const processData = async (movieData) => {
+    let totalPeople = await Person.find().exec();
+    let flag = false;
+    let people = [];
+    let multiPeople = [];
+    // console.log(movieData)
+    for(let j = 0; j < movieData.directors.length; ++j){
+        let person = {};
+        let person2 = {}
+        person.name = movieData.directors[j];
+        person.directed = movieData.title;
+        person2.name = movieData.directors[j];
+        // console.log(totalPeople,person.name);
+        if(totalPeople.some(element => element.name === person.name)){
+            multiPeople.push(person);
+            flag = true;
+        }
+
+        people.push(person);
+        totalPeople.push(person2);
+    }
+
+    for(let j = 0; j < movieData.writers.length; ++j){
+        let person = {};
+        let person2 = {}
+        person.name = movieData.writers[j];
+        person.written = movieData.title;
+        person2.name = movieData.writers[j];
+        // console.log(totalPeople,person.name);
+        if(people.some(element => element.name === person.name)){
+            continue;
+        }
+        if(totalPeople.some(element => element.name === person.name)){
+            multiPeople.push(person);
+            flag = true;
+        }
+              
+        people.push(person);
+        totalPeople.push(person2);
+    }
+
+    for(let j = 0; j < movieData.actors.length; ++j){
+        let person = {};
+        let person2 = {}
+        person.name = movieData.actors[j];
+        person.acted = movieData.title;
+        person2.name = movieData.actors[j];
+        // console.log(totalPeople,person.name);
+        if(people.some(element => element.name === person.name)){
+            continue;
+        }
+        if(totalPeople.some(element => element.name === person.name)){
+            multiPeople.push(person);
+            flag = true;
+        }
+        
+        people.push(person);
+        totalPeople.push(person2);
+    }    
+    
+    for(let j = 0; j < people.length; ++j){
+        let map = new Map();
+//         // let map2 = new Map();
+        for(let k = 0; k < people.length; ++k){
+            if(j === k){
+                continue;
+            }
+
+            map.set(people[k].name, 1);
+//             // map2.set(totalPeople[k].name, 1);
+        }
+//         // console.log(map2);
+        people[j].collaborated = map;
+//         // totalPeople[j].collaborated = map2;
+    }
+
+    for(let j = totalPeople.length-people.length; j < totalPeople.length; ++j){
+        let map2 = new Map();
+        for(let k = totalPeople.length-people.length; k < totalPeople.length; ++k){
+            if(j === k){
+                continue;
+            }
+            map2.set(totalPeople[k].name, 1);
+        }
+        totalPeople[j].collaborated = map2
+    }
+
+    if(flag){
+        for(let j = 0; j < multiPeople.length; ++j){
+            let multiArr = [];
+            
+            for(let k = 0; k < totalPeople.length; ++k){
+                if(totalPeople[k].name === multiPeople[j].name){
+                    const iterator = totalPeople[k].collaborated.keys();
+                    let temp = {};
+
+                    temp.name = totalPeople[k].name;
+                    temp.collaborated = new Map();
+
+                    for(let l = 0; l < totalPeople[k].collaborated.size; ++l){
+                        const value = iterator.next().value
+                        temp.collaborated.set(value,totalPeople[k].collaborated.get(value))
+                    }
+
+                    multiArr.push(temp);
+                }
+            }
+
+            //problem is the map is being sent by reference each time need to figure out a way to deep copy
+            let merged = multiArr[0].collaborated;
+            // console.log multiArr);
+            for(let k = 1; k < multiArr.length; ++k){
+                multiArr[k].collaborated.forEach((value, key) =>{
+                    console.log('------------------',key,merged);
+                    // console.log(merged);
+                    if(merged.has(key)){
+                        merged.set(key, merged.get(key)+1);
+                    }else{
+                        merged.set(key, value);
+                    }                    
+                });
+            }
+
+            let sortedMap = new Map([...merged.entries()].sort((a,b) => b[1] -a[1]));
+            // console.log(sortedMap);
+            let topFive = Array.from(sortedMap).slice(0,5);
+            let topFiveMap = new Map(topFive);
+            let topFiveArr = [];
+
+            const iterator = topFiveMap.keys();
+            let value = iterator.next().value;
+            while(value !== undefined){
+                topFiveArr.push(value);
+                value = iterator.next().value
+            }
+
+            for(let k = 0; k < people.length; ++k){
+                if(people[k].name === multiArr[0].name){
+                    people[k].collaborators = topFiveArr;
+                    people[k].collaborated = sortedMap;
+                }
+            }
+        }
+    }
+
+    for(let j = 0; j < people.length; ++j){
+        if(!(multiPeople.some(element => element.name === people[j].name))){
+            let sortedMap = new Map([...people[j].collaborated.entries()].sort((a,b) => b[1] -a[1]));
+            let topFive = Array.from(sortedMap).slice(0,5);
+            let topFiveMap = new Map(topFive);
+            let topFiveArr = [];
+            const iterator = topFiveMap.keys();
+            let value = iterator.next().value;
+            while(value !== undefined){
+                topFiveArr.push(value);
+                value = iterator.next().value
+            }
+            people[j].collaborators = topFiveArr;
+            people[j].collaborated = sortedMap;
+        }
+    }
+    // console.log(people);
+    movieData.peopleArr = people;
+    return movieData;
+
+}
+
 const addingPeople = async (body) => {
     let people = body.peopleArr;
 
     for(let element of people){
-        let timeout = await new Promise(resolve => setTimeout(resolve,100));
         let result = await Person.findOne({name: element.name}).exec();
-        console.log('-----------------------',element.name,result);
+        // console.log('-----------------------',element.name,result);
         if(result === null){
             let person = new Person({
                 name: element.name,
@@ -15,7 +182,7 @@ const addingPeople = async (body) => {
         
             person.save(function(err, result){
                 if(err) return console.log(err);
-                console.log('person save', result);
+                // console.log('person save', result);
             });
         }
     }
@@ -58,12 +225,12 @@ const addingMovie = async (body,res) => {
     movie.save((err, result) => {
         if(err) return console.log(err);
         // console.log('saved movie', result);
-        updatePeople(body);
-        res.status(200).json(result);
+        updatePeople(body, res);
+        // res.status(200).json(result);
     });
 }
 
-const updatePeople = async (body) => {
+const updatePeople = async (body, res) => {
     let people = body.peopleArr;
     const movieResult = await Movie.findOne({title: body.title}).exec();
 
@@ -82,25 +249,29 @@ const updatePeople = async (body) => {
     for (const person of people) {
         let arr = [];
         let count = 0;
-        for(let element of person.collaborated){
+        for(let element of person.collaborators){
             const personResult = await Person.findOne({name: element}).exec();
             arr.push(personResult._id);
             count++;
-
-            if(count === person.collaborated.length){
+            if(count === person.collaborators.length){
                 const updateResult = await Person.findOneAndUpdate({name: person.name}, {collaborators:arr}).exec();
             }
-        }        
+        }
+        const result = await Person.findOneAndUpdate({name:person.name}, {collaborated:person.collaborated}).exec();
     }
+    res.status(200).json(movieResult);
 }
 
 module.exports.addMovie = async (req, res) => {
     // console.log('addMovie', req.body);
-    await addingPeople(req.body);
-    // setTimeout(() =>{
-    await addingMovie(req.body,res);
-    // }, 1000)
-    
+    const result = await Movie.findOne({title:req.body.title});
+    if(result){
+        res.status(400).json({error: 'Movie already added to database'});
+        return;
+    }
+    const data = await processData(req.body);
+    await addingPeople(data);
+    await addingMovie(data, res);    
 }
 
 module.exports.getAllMovies = async (req, res) => {

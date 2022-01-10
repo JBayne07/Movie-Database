@@ -78,7 +78,7 @@ export const Person = () =>{
                         Unfollow
                     </Button>
 
-                    <h3>Movies Directed: </h3>
+                    {personData.directed.length===0?null:(<h3>Movies Directed: </h3>)}                    
                     {personData.directed.map(element => {
                         return(
                             <>
@@ -91,7 +91,7 @@ export const Person = () =>{
                         
                     })}
 
-                    <h3>Movies Written: </h3>
+                    {personData.written.length===0?null:(<h3>Movies Written: </h3>)}
                     {personData.written.map(element => {
                         return(
                             <>
@@ -103,7 +103,7 @@ export const Person = () =>{
                         )                        
                     })}
 
-                    <h3>Movies Acted In: </h3>
+                    {personData.acted.length===0?null:(<h3>Movies Acted In: </h3>)}
                     {personData.acted.map(element => {
                         return(
                             <>

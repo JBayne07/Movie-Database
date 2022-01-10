@@ -55,22 +55,6 @@ export const Login = () => {
         });
     }
 
-    const test = () => {
-        let options = {
-            url: 'http://localhost:9000/api/session',
-            method: 'GET',
-            headers: {
-                'Accept' : 'application/json',
-                'Content-Type' : 'application/json;charset=UTF-8'
-            },
-        };
-
-        axios(options).then(response => {
-            console.log(response.status);
-        });
-    }
-
-
     return(
         <>
             {isLogged ? <Navigate to='/profile' /> : null}
@@ -80,9 +64,6 @@ export const Login = () => {
             <br/>
             <Button variant='contained' color='inherit' onClick={login}>
                 Login
-            </Button>
-            <Button variant='contained' color='inherit' onClick={test}>
-                Test
             </Button>
             <Button variant='contained' color='inherit' onClick={addUser}>
                 Register

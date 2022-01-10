@@ -1,7 +1,7 @@
 const User = require('../models/userModel');
 const Movie = require('../models/movieModel');
 const Person = require('../models/personModel')
-let cookie;
+//Have to create login authentication and send out error messages
 
 module.exports.addUser = (req, res) => {
     console.log('addUser called me', req.body);
@@ -48,9 +48,7 @@ module.exports.login = (req, res) => {
     .populate('users')
     .exec(function(err, result){
         if(err) return console.log(err);
-        // console.log(result);
         req.session.userId = result._id.toString();
-        // result.session = req.session;
         cookie = req.session;
         console.log(req.session);
         res.status(200).json(result);
@@ -59,42 +57,98 @@ module.exports.login = (req, res) => {
 
 module.exports.addWatchlist = async (req, res) => {
     console.log('addWatchlist', req.params);
-    console.log(req.session);
-    let result = await User.findByIdAndUpdate(req.session.userId, {$push:{movies:req.params.id}});
-    res.status(200).json(result); 
+    if(req.session.userId){
+        const user = await User.findById(req.session.userId);
+        if(user.movies){
+            if(user.movies.includes(req.params.id)){
+                res.status(400).json({error:'User already added movie to watchlist'});
+            }else{
+                const result = await User.findByIdAndUpdate(req.session.userId, {$push:{movies:req.params.id}});
+                res.status(200).json(result);
+            }
+        }else{
+            const result = await User.findByIdAndUpdate(req.session.userId, {$push:{movies:req.params.id}});
+            res.status(200).json(result);
+        } 
+    }else{
+        res.status(400).json({error:'User is not logged in'});
+    }
+    
 }
 
 module.exports.removeWatchlist = async (req, res) => {
     console.log('removeWatchlist', req.params);
-    console.log(req.session);
-    let result = await User.findByIdAndUpdate(req.session.userId, {$pull:{movies:req.params.id}});
-    res.status(200).json(result); 
+    if(req.session.userId){
+        let result = await User.findByIdAndUpdate(req.session.userId, {$pull:{movies:req.params.id}});
+        res.status(200).json(result); 
+    }else{
+        res.status(400).json({error: 'User is not logged in'});
+    }
+    
 }
 
 module.exports.followPerson = async (req, res) => {
     console.log('followperson', req.params);
-    console.log(req.session);
-    let result = await User.findByIdAndUpdate(req.session.userId, {$push:{people:req.params.id}});
-    res.status(200).json(result);
+    if(req.session.userId){
+        const user = await User.findById(req.session.userId);
+        if(user.people){
+            if(user.people.includes(req.params.id)){
+                res.status(400).json({error: 'User already follows this person'});
+            }else{
+                const result = await User.findByIdAndUpdate(req.session.userId, {$push:{people:req.params.id}});
+                console.log(result);
+                res.status(200).json(result);
+            }
+        }else{
+            const result = await User.findByIdAndUpdate(req.session.userId, {$push:{people:req.params.id}});
+            console.log(result);
+            res.status(200).json(result);
+        }
+    }else{
+        res.status(400).json({error: 'User is not logged in'});
+    }
+    
 }
 
 module.exports.unfollowPerson = async (req, res) => {
     console.log('unfollowperson', req.params);
-    console.log(req.session);
-    let result = await User.findByIdAndUpdate(req.session.userId, {$pull:{people:req.params.id}});
-    res.status(200).json(result);
+    if(req.session.userId){
+        let result = await User.findByIdAndUpdate(req.session.userId, {$pull:{people:req.params.id}});
+        res.status(200).json(result);
+    }else{
+        res.status(400).json({error: 'User is not logged in'});
+    }
+    
 }
 
 module.exports.followUser = async (req, res) => {
     console.log('followuser', req.params);
-    console.log(req.session);
-    let result = await User.findByIdAndUpdate(req.session.userId, {$push:{users:req.params.id}});
-    res.status(200).json(result);
+    if(req.session.userId){
+        const user = await User.findById(req.session.userId);
+        if(user.users){
+            if(user.users.includes(req.params.id)){
+                res.status(400).json({error: 'User already follows this user'});
+            }else{
+                const result = await User.findByIdAndUpdate(req.session.userId, {$push:{users:req.params.id}});
+                console.log(result);
+                res.status(200).json(result);
+            }
+        }else{
+            const result = await User.findByIdAndUpdate(req.session.userId, {$push:{users:req.params.id}});
+            console.log(result);
+            res.status(200).json(result);
+        }
+    }else{
+        res.status(400).json({error: 'User is not logged in'});
+    }
 }
 
 module.exports.unfollowUser = async (req, res) => {
     console.log('unfollowuser', req.params);
-    console.log(req.session);
-    let result = await User.findByIdAndUpdate(req.session.userId, {$pull:{users:req.params.id}});
-    res.status(200).json(result);
+    if(req.session.userId){
+        let result = await User.findByIdAndUpdate(req.session.userId, {$pull:{users:req.params.id}});
+        res.status(200).json(result);
+    }else{
+        res.status(400).json({error: 'User is not logged in'});
+    }    
 }
