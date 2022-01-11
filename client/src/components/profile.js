@@ -1,30 +1,47 @@
 import React from 'react';
 import {Link, Navigate} from 'react-router-dom';
-import {useSelector} from 'react-redux';
+import {Radio, RadioGroup, FormControlLabel, FormLabel, FormControl} from '@mui/material';
+import {useSelector, useDispatch} from 'react-redux';
+import {contribute} from '../actions'
+const axios = require('axios');
 
 export const Profile = () => {
     const userData = useSelector(state => state.userdata)
+    const dispatch = useDispatch();
+    const handleChange = (event) => {
+        // console.log(event.target.value);
+        let flag = (event.target.value==='contributing');
+        let options = {
+            url: 'http://localhost:9000/api/users/contribute',
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json;charset=UTF-8'
+            },            
+            data:{
+                contribute: flag
+            },
+            withCredentials: true
+        };
 
-    // useEffect(()=>{
-    //     const options = {
-    //         url: 'http://localhost:9000/api/users',
-    //         method: 'GET',
-    //         headers: {
-    //             'Accept' : 'application/json',
-    //             'Content-Type' : 'application/json;charset=UTF-8'
-    //         }
-    //     }
-
-    //     axios(options).then(response =>{
-    //         console.log(response.data);
-    //     });
-    // },[])
+        axios(options).then(response => {
+            dispatch(contribute(flag));
+            console.log(response.status, response.data);
+        });
+    }
 
     return(
         <>
             {userData ? (
                 <>
                     <h1> Username: {userData.username} </h1>
+                    <FormControl>
+                        <FormLabel>Account Type</FormLabel>
+                        <RadioGroup row aria-label='accountType' name='radioButtonGroup' onChange={handleChange}>
+                            <FormControlLabel value='regular' control={<Radio />} label={'Regular'}/>
+                            <FormControlLabel value='contributing' control={<Radio />} label={'Contributing'}/>
+                        </RadioGroup>
+                    </FormControl>
 
                     <h3>Users</h3>
 

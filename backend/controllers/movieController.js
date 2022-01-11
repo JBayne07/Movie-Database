@@ -313,7 +313,6 @@ module.exports.getAllMovies = async (req, res) => {
             }else if(temp3.length !== 0){
                 result = temp3;
             }
-            // console.log(result);
             res.status(200).json(result);
         });
 }

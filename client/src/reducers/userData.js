@@ -5,53 +5,64 @@ const userDataReducer = (state = '', action) => {
         case 'LOGOUT':
             return '';
         case 'ADDWATCHLIST':
-            const addMovie = state;
-            if(addMovie){
-                if(!(addMovie.movies.some(element=>element.title===action.payload.title))){
-                    addMovie.movies.push(action.payload);              
+            let addMovie = [...state.movies];
+            if(state){
+                if(!(state.movies.some(element=>element.title===action.payload.title))){
+                    addMovie.push(action.payload)
                 }
-            }            
-            return addMovie;
+            }
+            return {
+                ...state,
+                movies: addMovie
+            }
 
         case 'REMOVEWATCHLIST':
-            const removeMovie = state;
-            if(removeMovie){
-                removeMovie.movies = removeMovie.movies.filter(element => {return element.title !== action.payload.title});
+            return{
+                ...state,
+                movies: state.movies.filter(element => {return element.title !== action.payload.title})
             }
-            return removeMovie;
 
         case 'FOLLOWPERSON':
-            const followPerson = state;
-            if(followPerson){
-                if(!(followPerson.people.some(element=>element.name===action.payload.name))){
-                    console.log(followPerson.people.includes(action.payload));
-                    followPerson.people.push(action.payload);
+            let followPerson = [...state.people];
+            if(state){
+                if(!(state.people.some(element=>element.name===action.payload.name))){
+                    followPerson.push(action.payload);
                 }
             }            
-            return followPerson;
+            return {
+                ...state,
+                people: followPerson
+            }
 
         case 'UNFOLLOWPERSON':
-            const unfollowPerson = state;
-            if(unfollowPerson){
-                unfollowPerson.people = unfollowPerson.people.filter(element => {return element.name !== action.payload.name});
+            return{
+                ...state,
+                people: state.people.filter(element => {return element.name !== action.payload.name})
             }
-            return unfollowPerson;
 
         case 'FOLLOWUSER':
-            const followUser = state;
+            let followUser = [...state.users]
             if(followUser){
                 if(!(followUser.users.some(element=>element.username===action.payload.username))){            
-                    followUser.users.push(action.payload);
+                    followUser.push(action.payload);
                 }
             }            
-            return followUser;
+            return {
+                ...state,
+                users: followUser
+            }
 
         case 'UNFOLLOWUSER':
-            const unfollowUser = state;
-            if(unfollowUser){
-                unfollowUser.users = unfollowUser.users.filter(element => {return element.username !== action.payload.username});
+            return{
+                ...state,
+                users: state.users.filter(element => {return element.username !== action.payload.username})
             }
-            return unfollowUser;
+        
+        case 'CONTRIBUTE':
+            return{
+                ...state,
+                contribute:action.payload
+            };
 
         default:
             return state;

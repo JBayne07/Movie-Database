@@ -6,10 +6,11 @@ const Person = require('../models/personModel')
 module.exports.addUser = (req, res) => {
     console.log('addUser called me', req.body);
     //Need to error check for bad username or password
-    let user = new User({username:req.body.username, password:req.body.password});
+    let user = new User({username:req.body.username, password:req.body.password, contribute:false});
 
     user.save(function(err, user){
         if(err) return console.log(err);
+        req.session.userId = user._id.toString();
         console.log('Saved User' + user);
         res.status(200).json(user);
     });    
@@ -48,10 +49,15 @@ module.exports.login = (req, res) => {
     .populate('users')
     .exec(function(err, result){
         if(err) return console.log(err);
-        req.session.userId = result._id.toString();
-        cookie = req.session;
-        console.log(req.session);
-        res.status(200).json(result);
+        console.log(result);
+        if(result === null){
+            res.status(400).json({error: 'User is not in database'});
+        }else{
+            req.session.userId = result._id.toString();
+            console.log(req.session);
+            res.status(200).json(result);
+        }
+        
     });  
 }
 
@@ -151,4 +157,12 @@ module.exports.unfollowUser = async (req, res) => {
     }else{
         res.status(400).json({error: 'User is not logged in'});
     }    
+}
+
+module.exports.changeContribute = async (req, res) => {
+    console.log('change contribute', req.body);
+
+    let result = await User.findByIdAndUpdate(req.session.userId, {contribute:req.body.contribute}).exec();
+    console.log(result);
+    res.status(200).json(result);
 }

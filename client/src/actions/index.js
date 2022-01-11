@@ -52,3 +52,10 @@ export const unfollowUser = (userData) => {
         payload: userData
     };
 };
+
+export const contribute = (flag) => {
+    return{
+        type: 'CONTRIBUTE',
+        payload: flag
+    }
+}

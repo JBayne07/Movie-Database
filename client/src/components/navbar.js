@@ -48,27 +48,20 @@ export const Navbar = () => {
               <Link to='/profile' className='ProfilePage' color="inherit">
                 Profile
               </Link>
-            </Button>
-            {/* {
-            profile ? (
-            <Button variant="contained" color="inherit" >
-              <Link to='/profile' className='ProfilePage' color="inherit">
-                Profile
-              </Link>
-            </Button>
-            ) : (
-            <Button variant="contained" color="inherit" >
-              <Link to='/login' className='ProfilePage' color="inherit">
-                Profile
-              </Link>
-            </Button>
-            )} */}
-            
+            </Button>            
             <Button variant="contained" color="inherit">
                 <Link to='/search' className='SearchPage' color="inherit">
                   Search
                 </Link>
             </Button>
+            {(userData.contribute===true) ? (
+              <Button variant="contained" color="inherit">
+                <Link to='/addMovie' className='AddMoviePage' color="inherit">
+                  Add Movie
+                </Link>
+              </Button>
+            ):null}
+            
             {profile ? (
               <Button variant="contained" color="inherit" onClick={logout}>               
                 <Link to='/login' className='LoginPage' color="inherit">

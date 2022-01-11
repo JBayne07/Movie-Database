@@ -44,6 +44,7 @@ export const Login = () => {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json;charset=UTF-8'
             },
+            withCredentials: true,
             data:{
                 username: username,
                 password: password
@@ -51,6 +52,10 @@ export const Login = () => {
         };
 
         axios(options).then(response => {
+            dispatch(loginAction(response.data));
+            if(response.data._id){
+                setLogged(true);
+            }
             console.log(response.status);
         });
     }

@@ -16,6 +16,7 @@ router.post('/users/followperson/:id', userController.followPerson);
 router.put('/users/unfollowperson/:id', userController.unfollowPerson);
 router.post('/users/followuser/:id', userController.followUser);
 router.put('/users/unfollowuser/:id', userController.unfollowUser);
+router.post('/users/contribute', userController.changeContribute);
 
 router.get('/movies/:id', movieController.getMovie);
 router.get('/movies', movieController.getAllMovies);

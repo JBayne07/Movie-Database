@@ -28,11 +28,14 @@ module.exports.getPerson = (req, res) => {
 }
 
 module.exports.getAllPeople = (req, res) => {
-    console.log('getAllPeople', req.body);
-
-    Person.find(function(err, result){
+    console.log('getAllPeople', req.query);
+    if(req.query.person === ''){
+        res.status(200).json({message:'No text in textfield'});
+        return;
+    }
+    Person.find({name: new RegExp(req.query.person,'i')}).limit(5).exec((err, result) =>{
         if(err) return console.log(result);
-        console.log(result);
+        // console.log(result);
         res.status(200).json(result);
     });
 }
