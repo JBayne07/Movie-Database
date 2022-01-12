@@ -1,8 +1,5 @@
 const movieData = require('./movie-data-10.json');
 const axios = require('axios');
-let totalPeople = [];
-// let people = [];
-let flag = false;
 
 const init = async () =>{
     for(let i = 0; i < movieData.length; ++i){

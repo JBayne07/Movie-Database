@@ -1,0 +1,25 @@
+.writerList{
+    width:300px;
+}
+.writerSelected{
+    display: inline-block;
+    border: 10px inset rgb(228, 223, 223);
+    width:1000px;
+    margin: 20px;
+}
+.directorList{
+    width:300px;
+}
+.directorSelected{
+    display: inline-block;
+    width:1000px;
+    margin: 20px;
+}
+.actorList{
+    width:300px;
+}
+.actorSelected{
+    display: inline-block;
+    width:1000px;
+    margin: 20px;
+}

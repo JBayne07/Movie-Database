@@ -115,7 +115,6 @@ const processData = async (movieData) => {
             // console.log multiArr);
             for(let k = 1; k < multiArr.length; ++k){
                 multiArr[k].collaborated.forEach((value, key) =>{
-                    console.log('------------------',key,merged);
                     // console.log(merged);
                     if(merged.has(key)){
                         merged.set(key, merged.get(key)+1);
