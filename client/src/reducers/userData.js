@@ -8,7 +8,8 @@ const userDataReducer = (state = '', action) => {
             let addMovie = [...state.movies];
             if(state){
                 if(!(state.movies.some(element=>element.title===action.payload.title))){
-                    addMovie.push(action.payload)
+                    addMovie.push(action.payload);
+                    
                 }
             }
             return {

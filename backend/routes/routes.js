@@ -27,5 +27,6 @@ router.get('/people', personController.getAllPeople);
 router.post('/people', personController.addPerson);
 
 router.post('/reviews', reviewController.addReview);
+router.get('/reviews', reviewController.getReview);
 
 module.exports = router;

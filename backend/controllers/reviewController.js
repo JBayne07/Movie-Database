@@ -23,8 +23,13 @@ module.exports.addReview = async (req, res) => {
     }else{
         res.status(400).json({error: 'User is not logged in'});
     }
-    
+}
 
-    
+module.exports.getReview = async (req, res) => {
+    console.log('get review', req.query);
 
+    Review.findById(req.query.id,(err, result) => {
+        if(err) return console.log(err);
+        res.status(200).json(result);
+    })
 }

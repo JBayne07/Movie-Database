@@ -12,6 +12,7 @@
 }
 .directorSelected{
     display: inline-block;
+    border: 10px inset rgb(228, 223, 223);
     width:1000px;
     margin: 20px;
 }

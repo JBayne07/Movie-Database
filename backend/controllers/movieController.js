@@ -318,7 +318,6 @@ module.exports.getAllMovies = async (req, res) => {
 
 module.exports.getMovie = async (req, res) => {
     console.log('getmovie', req.params);
-    
     Movie.findById(req.params.id)
     .populate('directors')
     .populate('writers')
@@ -327,9 +326,15 @@ module.exports.getMovie = async (req, res) => {
         path:'reviews',
         populate:{ path: 'user' }
     })
-    .exec((err, result) => {
+    .exec(async (err, result) => {
         if(err) return console.log(err);
-        console.log(result);
-        res.status(200).json(result);
+        Movie.find({$and:[{$in:result.genres}, {title:{$ne:result.title}}]}).limit(5).exec((err, queryResult) => {
+            if(err) return console.log(err);
+            result.similar = queryResult;
+            res.status(200).json(result);
+            console.log(result)
+        })
+        // console.log(result);
+        // res.status(200).json(result);
     });
 }

@@ -3,7 +3,7 @@ const Person = require('../models/personModel');
 module.exports.addPerson = (req, res) => {
     console.log('addPerson', req.body);
 
-    let person = new Person();
+    let person = new Person({name: req.body.person});
 
     person.save(function(err, result){
         if(err) return console.log(result);

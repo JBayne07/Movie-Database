@@ -25,6 +25,7 @@ module.exports.getUser = (req, res) => {
     .populate('reviews')
     .exec((err, result) => {
         if(err) return console.log(err);
+        
         console.log('result: ',result);
         res.status(200).json(result);
     });
@@ -54,8 +55,26 @@ module.exports.login = (req, res) => {
             res.status(400).json({error: 'User is not in database'});
         }else{
             req.session.userId = result._id.toString();
-            console.log(req.session);
-            res.status(200).json(result);
+            let arr = [''];
+            for(element of result.movies){
+                arr.push(element.title);
+            }
+            
+            Movie.find({$and: [ {$in:result.movies.genres}, {title: {$nin: arr}}]}).limit(5).exec((err, queryResult) => {
+                if(err) return console.log(err);
+                result.recommendedMovies = queryResult;
+                res.status(200).json(result);
+                // console.log(result)
+            });
+
+            // Movie.find({$and:[{$in:result.movies.genres}]}).limit(5).exec((err, queryResult) => {
+            //     if(err) return console.log(err);
+            //     result.recommendedMovies = queryResult;
+            //     res.status(200).json(result);
+            //     // console.log(result)
+            // });
+            // console.log(req.session);
+            // res.status(200).json(result);
         }
         
     });  

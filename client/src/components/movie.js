@@ -93,6 +93,31 @@ export const Movie = () =>{
         });
     }
 
+    const viewReview = (id) => {
+        let options = {
+            url: 'http://localhost:9000/api/reviews',
+            method: 'GET',
+            headers: {
+                'Accept' : 'application/json',
+                'Content-Type' : 'application/json;charset=UTF-8'
+            },
+            params:{
+                id: id
+            },
+            withCredentials: true
+        };
+
+        axios(options).then(response => {
+            // setVisibility(false);
+            console.log(response.status);
+            console.log(response.data);
+            const element = document.getElementById('details_'+id);
+            element.innerHTML = 'Details: ' + response.data.details;
+        });
+
+        
+    }
+
     return(
         <>
             {visible?(
@@ -152,16 +177,35 @@ export const Movie = () =>{
                         )
                     })}
 
+                    <h5>Similar Movies</h5>
+
+                    {movieData.similar.map(element => {
+                        return(
+                            <>
+                                <Link to={'/movie/'+element._id.toString()} className='Movie' color="inherit">
+                                    {element.title}
+                                </Link>
+                                <br/>
+                            </>
+                        )
+                    })}
+
                     <h5>Reviews: </h5>
                     {movieData.reviews.map(element => {
                         return(
                             <>
-                                <p>{element.score}</p>
+                                <p>Score: {element.score}</p>
+                                <p>Summary: {element.summary}</p>
                                     {element.user?(
                                     <>
                                         <Link to={'/user/'+element.user._id.toString()} className='User' color="inherit">
                                             {element.user.username}
                                         </Link>
+                                        <Button variant='contained' color='inherit' onClick={() => viewReview(element._id)}>
+                                            View Full Review
+                                        </Button>
+                                        <p id={'details_'+element._id}></p>
+
                                     </>
                                 ):null}
                                 

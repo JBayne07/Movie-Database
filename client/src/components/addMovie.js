@@ -18,6 +18,7 @@ export const AddMovie = () => {
     const [writerVisible, setWriterVisibility] = useState(false);
     const [directorVisible, setDirectorVisibility] = useState(false);
     const [actorVisible, setActorVisibility] = useState(false);
+    const [person, setPerson] = useState('');
 
     useEffect(() => {
         if(textWriter===''){
@@ -142,7 +143,7 @@ export const AddMovie = () => {
         if(text.includes(value)){
             return;
         }
-        if(text.length === 1 || text.length === 0){
+        if(text.length === 0){
             element.innerHTML = value;
         }else{
             element.innerHTML = text + ', ' + value;
@@ -151,7 +152,7 @@ export const AddMovie = () => {
 
     const clearWriters = () => {
         const element = document.getElementsByClassName('writerSelected')[0];
-        element.innerHTML = ' ';
+        element.innerHTML = '';
     }
 
     const directorListClick = value => {
@@ -160,7 +161,7 @@ export const AddMovie = () => {
         if(text.includes(value)){
             return;
         }
-        if(text.length === 1 || text.length === 0){
+        if(text.length === 0){
             element.innerHTML = value;
         }else{
             element.innerHTML = text + ', ' + value;
@@ -169,7 +170,7 @@ export const AddMovie = () => {
 
     const clearDirectors = () => {
         const element = document.getElementsByClassName('directorSelected')[0];
-        element.innerHTML = ' ';
+        element.innerHTML = '';
     }
 
     const actorListClick = value => {
@@ -178,7 +179,7 @@ export const AddMovie = () => {
         if(text.includes(value)){
             return;
         }
-        if(text.length === 1 || text.length === 0){
+        if(text.length === 0){
             element.innerHTML = value;
         }else{
             element.innerHTML = text + ', ' + value;
@@ -187,103 +188,136 @@ export const AddMovie = () => {
 
     const clearActors = () => {
         const element = document.getElementsByClassName('actorSelected')[0];
-        element.innerHTML = ' ';
+        element.innerHTML = '';
+    }
+
+    const addPerson = () => {
+
+        let options = {
+            url: 'http://localhost:9000/api/people',
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json;charset=UTF-8'
+            },
+            withCredentials: true,
+            data:{
+                person: person
+            }
+        };
+
+        axios(options).then(response => {
+            console.log(response.status);
+        });
+
     }
 
     return(
         <>
-            <h1>Add Movie</h1>
+            <div>                
+            
+                <h1>Add Movie</h1>
 
-            <TextField id="title" label="Title" variant="filled" onChange={(event) => {setTitle(event.target.value)}} />
-            <br/>
-            <TextField id="releaseDate" label="Release Date" variant="filled" onChange={(event) => {setReleaseDate(event.target.value)}}/>
-            <br/>
-            <TextField id="runtime" label="Runtime" variant="filled" onChange={(event) => {setRuntime(event.target.value)}}/>
-            <br/>
-            <TextField id="plot" label="Plot" variant="filled" onChange={(event) => {setPlot(event.target.value)}}/>
-            <br/>
-            <TextField id="genres" label="Genre Keywords" variant="filled" onChange={(event) => {setGenres(event.target.value)}}/>
-            <br/>
-            <TextField id="writer" label="Writers" variant="filled" onChange={(event) => {setTextWriter(event.target.value)}}/>
-            <div className='writerSelected'/>
-            <div>
-                <Button width='50px' variant='contained' color='inherit' onClick={clearWriters}>
-                    Clear Writers Selected
-                </Button>
-            </div>
-            
-            <div className='writerList'>            
-                <List>
-                    {writerVisible?(
-                        writerResult.map(element => {
-                            return(
-                                <>
-                                    <ListItem disablePadding>
-                                        <ListItemButton onClick={() => writerListClick(element.name)}>
+                <TextField id="title" label="Title" variant="filled" onChange={(event) => {setTitle(event.target.value)}} />
+                <br/>
+                <TextField id="releaseDate" label="Release Date" variant="filled" onChange={(event) => {setReleaseDate(event.target.value)}}/>
+                <br/>
+                <TextField id="runtime" label="Runtime" variant="filled" onChange={(event) => {setRuntime(event.target.value)}}/>
+                <br/>
+                <TextField id="plot" label="Plot" variant="filled" onChange={(event) => {setPlot(event.target.value)}}/>
+                <br/>
+                <TextField id="genres" label="Genre Keywords" variant="filled" onChange={(event) => {setGenres(event.target.value)}}/>
+                <br/>
+                <TextField id="writer" label="Writers" variant="filled" onChange={(event) => {setTextWriter(event.target.value)}}/>
+                <div className='writerSelected'/>
+                <div>
+                    <Button variant='contained' color='inherit' onClick={clearWriters}>
+                        Clear Writers Selected
+                    </Button>
+                </div>
+                
+                <div className='writerList'>            
+                    <List>
+                        {writerVisible?(
+                            writerResult.map(element => {
+                                return(
+                                    <>
+                                        <ListItem disablePadding>
+                                            <ListItemButton onClick={() => writerListClick(element.name)}>
+                                                <ListItemText primary={element.name} />
+                                            </ListItemButton>
+                                        </ListItem>
+                                    </>
+                                )
+                            })
+                        ):null}
+                    </List>
+                </div>
+                
+                <TextField id="director" label="Directors" variant="filled" onChange={(event) => {setTextDirector(event.target.value)}}/>
+                <div className='directorSelected'/>
+                <div>
+                    <Button variant='contained' color='inherit' onClick={clearDirectors}>
+                        Clear Directors Selected
+                    </Button>
+                </div>            
+                <div className='directorList'>
+                    <List>
+                        {directorVisible?(
+                            directorResult.map(element => {
+                                return(
+                                    <>
+                                        <ListItem disablePadding>
+                                            <ListItemButton onClick={() => directorListClick(element.name)}>
                                             <ListItemText primary={element.name} />
-                                        </ListItemButton>
-                                    </ListItem>
-                                </>
-                            )
-                        })
-                    ):null}
-                </List>
-            </div>
-            
-            <TextField id="director" label="Directors" variant="filled" onChange={(event) => {setTextDirector(event.target.value)}}/>
-            <div className='directorSelected'/>
-            <div>
-                <Button variant='contained' color='inherit' onClick={clearDirectors}>
-                    Clear Directors Selected
-                </Button>
-            </div>            
-            <div className='directorList'>
-                <List>
-                    {directorVisible?(
-                        directorResult.map(element => {
-                            return(
-                                <>
-                                    <ListItem disablePadding>
-                                        <ListItemButton onClick={() => directorListClick(element.name)}>
-                                        <ListItemText primary={element.name} />
-                                        </ListItemButton>
-                                    </ListItem>
-                                </>
-                            )
-                        })
-                    ):null}                
-                </List>
-            </div>            
-            <TextField id="actor" label="Actors" variant="filled" onChange={(event) => {setTextActor(event.target.value)}}/>
-            <div className='actorSelected'/>
-            <div>
-                <Button variant='contained' color='inherit' onClick={clearActors}>
-                    Clear Actors Selected
+                                            </ListItemButton>
+                                        </ListItem>
+                                    </>
+                                )
+                            })
+                        ):null}                
+                    </List>
+                </div>            
+                <TextField id="actor" label="Actors" variant="filled" onChange={(event) => {setTextActor(event.target.value)}}/>
+                <div className='actorSelected'/>
+                <div>
+                    <Button variant='contained' color='inherit' onClick={clearActors}>
+                        Clear Actors Selected
+                    </Button>
+                </div>
+                
+                <div className='actorList'>
+                    <List>
+                        {actorVisible?(
+                            actorResult.map(element => {
+                                return(
+                                    <>
+                                        <ListItem disablePadding>
+                                            <ListItemButton onClick={() => actorListClick(element.name)}>
+                                            <ListItemText primary={element.name} />
+                                            </ListItemButton>
+                                        </ListItem>
+                                    </>
+                                )
+                            })
+                        ):null}
+                    </List>
+                </div>
+                
+                <Button variant='contained' color='inherit' onClick={addMovie}>
+                    Add Movie
                 </Button>
             </div>
-            
-            <div className='actorList'>
-                <List>
-                    {actorVisible?(
-                        actorResult.map(element => {
-                            return(
-                                <>
-                                    <ListItem disablePadding>
-                                        <ListItemButton onClick={() => actorListClick(element.name)}>
-                                        <ListItemText primary={element.name} />
-                                        </ListItemButton>
-                                    </ListItem>
-                                </>
-                            )
-                        })
-                    ):null}
-                </List>
+
+            <div>           
+                <h1>Add Person</h1>
+                <TextField id="name" label="Name" variant="filled" onChange={(event) => {setPerson(event.target.value)}} />
+                <br/>
+                <Button variant='contained' color='inherit' onClick={addPerson}>
+                    Add Person
+                </Button>
             </div>
-            
-            <Button variant='contained' color='inherit' onClick={addMovie}>
-                Add Movie
-            </Button>
+
         </>
-        
     )
 }
