@@ -21,13 +21,31 @@ module.exports.getUser = (req, res) => {
 
     User.findById(req.params.id)
     .populate('movies')
+    .populate('users')
     .populate('people')
     .populate('reviews')
     .exec((err, result) => {
         if(err) return console.log(err);
         
-        console.log('result: ',result);
-        res.status(200).json(result);
+        let arr = [];
+        let genreArr = [];
+        for(element of result.movies){
+            arr.push(element.title);
+            for(genre of element.genres){
+                if(genreArr.includes(genre)){
+                    continue;
+                }
+                genreArr.push(genre);
+            }
+        }
+
+        console.log(genreArr);
+        Movie.find({$and: [ {$in:result.movies.genres}, {title: {$nin: arr}}]}).limit(5).exec((err, queryResult) => {
+            if(err) return console.log(err);
+            result.recommendedMovies = queryResult;
+            res.status(200).json(result);
+            console.log(result)
+        });
     });
 }
 
@@ -50,34 +68,30 @@ module.exports.login = (req, res) => {
     .populate('users')
     .exec(function(err, result){
         if(err) return console.log(err);
-        console.log(result);
         if(result === null){
             res.status(400).json({error: 'User is not in database'});
         }else{
             req.session.userId = result._id.toString();
-            let arr = [''];
+            let arr = [];
+            let genreArr = [];
             for(element of result.movies){
                 arr.push(element.title);
+                for(genre of element.genres){
+                    if(genreArr.includes(genre)){
+                        continue;
+                    }
+                    genreArr.push(genre);
+                }
             }
-            
+            console.log(genreArr);
             Movie.find({$and: [ {$in:result.movies.genres}, {title: {$nin: arr}}]}).limit(5).exec((err, queryResult) => {
                 if(err) return console.log(err);
                 result.recommendedMovies = queryResult;
                 res.status(200).json(result);
                 // console.log(result)
             });
-
-            // Movie.find({$and:[{$in:result.movies.genres}]}).limit(5).exec((err, queryResult) => {
-            //     if(err) return console.log(err);
-            //     result.recommendedMovies = queryResult;
-            //     res.status(200).json(result);
-            //     // console.log(result)
-            // });
-            // console.log(req.session);
-            // res.status(200).json(result);
-        }
-        
-    });  
+        } 
+    });
 }
 
 module.exports.addWatchlist = async (req, res) => {

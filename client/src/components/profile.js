@@ -1,13 +1,41 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {Link, Navigate} from 'react-router-dom';
 import {Button, Radio, RadioGroup, FormControlLabel, FormLabel, FormControl} from '@mui/material';
 import {useSelector, useDispatch} from 'react-redux';
-import {contribute, removeWatchList} from '../actions'
+import {contribute, removeWatchList, unfollowPerson, unfollowUser} from '../actions'
 const axios = require('axios');
 
 export const Profile = () => {
-    const userData = useSelector(state => state.userdata)
+    const user = useSelector(state => state.userdata);
+    const [userData, setData] = useState(user);
+    const [visible, setVisibility] = useState(false);
     const dispatch = useDispatch();
+
+    useEffect(() => {
+        if(!(user)){
+            console.log('hi')
+            return;
+        }
+        let options = {
+            url: 'http://localhost:9000/api/users/'+user._id,
+            method: 'GET',
+            headers: {
+                'Accept' : 'application/json',
+                'Content-Type' : 'application/json;charset=UTF-8'
+            },
+        };
+
+        axios(options).then(response => {
+            console.log(response.status);
+            console.log(response.data);
+            setData(response.data);
+            // if(response.data){
+            //     console.log(response.data);
+                setVisibility(true);
+            // }
+        });
+    }, [visible])
+
     const handleChange = (event) => {
         // console.log(event.target.value);
         let flag = (event.target.value==='contributing');
@@ -45,12 +73,54 @@ export const Profile = () => {
         axios(options).then(response => {
             console.log(response.status);
             console.log(response.data);
+            setVisibility(false);
         });
     }
 
+    const unFollowPerson = (element) => {
+        dispatch(unfollowPerson(element));
+        let options = {
+            url: 'http://localhost:9000/api/users/unfollowperson/'+element._id,
+            method: 'PUT',
+            headers: {
+                'Accept' : 'application/json',
+                'Content-Type' : 'application/json;charset=UTF-8'
+            },
+            withCredentials: true,
+        };
+
+        axios(options).then(response => {            
+            console.log(response.status);
+            console.log(response.data);
+            setVisibility(false);
+        });
+    }
+
+    const unFollowUser = (element) => {
+        dispatch(unfollowUser(element));
+        let options = {
+            url: 'http://localhost:9000/api/users/unfollowuser/'+element._id,
+            method: 'PUT',
+            headers: {
+                'Accept' : 'application/json',
+                'Content-Type' : 'application/json;charset=UTF-8'
+            },
+            withCredentials: true
+        };
+
+        axios(options).then(response => {
+            console.log(response.status);
+            console.log(response.data);
+            setVisibility(false);
+        });
+    }
+    
+
     return(
         <>
-            {userData ? (
+            {user?null:<Navigate to='/login'/>}
+
+            {visible ? (
                 <>
                     <h1> Username: {userData.username} </h1>
                     <FormControl>
@@ -69,6 +139,9 @@ export const Profile = () => {
                                 <Link to={'/user/'+element._id.toString()} className='User' color="inherit">
                                     {element.username}
                                 </Link>
+                                <Button variant='contained' color='inherit' onClick={() => unFollowUser(element)}>
+                                    Unfollow
+                                </Button>
                             </>
                         )
                     })}
@@ -81,6 +154,9 @@ export const Profile = () => {
                                 <Link to={'/person/'+element._id.toString()} className='Person' color="inherit">
                                     {element.name}
                                 </Link>
+                                <Button variant='contained' color='inherit' onClick={() => unFollowPerson(element)}>
+                                    Unfollow
+                                </Button>
                                 <br/>
                             </>
                         )                
@@ -115,7 +191,7 @@ export const Profile = () => {
                         )
                     })}
                 </>
-            ): <Navigate to='/login'/>}            
+            ): null}            
         </>
     )
 }

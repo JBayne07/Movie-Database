@@ -7,7 +7,7 @@ export const Search = () => {
     const [searchTitle, setTitle] = useState('');
     const [searchName, setName] = useState('');
     const [searchGenre, setGenre] = useState('');
-
+    const [count, setCount] = useState(0);
     const [searchData, setData] = useState([]);
     const [visible, setVisibility] = useState(false);
 
@@ -26,7 +26,8 @@ export const Search = () => {
             params:{
                 title:searchTitle,
                 name:searchName,
-                genre:searchGenre
+                genre:searchGenre,
+                count:count
 
             }
         };
@@ -38,14 +39,17 @@ export const Search = () => {
             setVisibility(true);
         });
 
-    }, [searchTitle, searchName, searchGenre]);
+    }, [searchTitle, searchName, searchGenre, count]);
 
     const nextPage = () => {
-        console.log('next')
+        console.log('next');
+        setCount(count => count+1);
     }
 
     const previousPage = () => {
-        console.log('previous')
+        console.log('previous');
+        setCount(count => count-1);
+
     }
 
     return(
@@ -71,10 +75,12 @@ export const Search = () => {
                     </>
                 )
             })):null}
-
-            <Button variant='contained' color='inherit' onClick={previousPage}>
-                Previous
-            </Button>
+            {count>0?(
+                <Button variant='contained' color='inherit' onClick={previousPage}>
+                    Previous
+                </Button>
+            ):null}
+            
             <Button variant='contained' color='inherit' onClick={nextPage}>
                 Next
             </Button>

@@ -1,8 +1,9 @@
-const movieData = require('./movie-data-10.json');
+const movieData = require('./movie-data-100.json');
 const axios = require('axios');
 
 const init = async () =>{
     for(let i = 0; i < movieData.length; ++i){
+        new Promise(resolve => setTimeout(resolve, 1000));
         movieData[i].Year = parseInt(movieData[i].Year)
         movieData[i].Runtime = parseInt(movieData[i].Runtime)
     

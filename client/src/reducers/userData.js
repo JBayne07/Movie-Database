@@ -43,8 +43,9 @@ const userDataReducer = (state = '', action) => {
 
         case 'FOLLOWUSER':
             let followUser = [...state.users]
-            if(followUser){
-                if(!(followUser.users.some(element=>element.username===action.payload.username))){            
+            console.log(state.users);
+            if(state){
+                if(!(state.users.some(element=>element.username===action.payload.username))){            
                     followUser.push(action.payload);
                 }
             }            

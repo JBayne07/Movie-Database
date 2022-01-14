@@ -69,13 +69,9 @@ const processData = async (movieData) => {
             if(j === k){
                 continue;
             }
-
             map.set(people[k].name, 1);
-//             // map2.set(totalPeople[k].name, 1);
         }
-//         // console.log(map2);
         people[j].collaborated = map;
-//         // totalPeople[j].collaborated = map2;
     }
 
     for(let j = totalPeople.length-people.length; j < totalPeople.length; ++j){
@@ -95,6 +91,7 @@ const processData = async (movieData) => {
             
             for(let k = 0; k < totalPeople.length; ++k){
                 if(totalPeople[k].name === multiPeople[j].name){
+                    console.log(totalPeople[k]);
                     const iterator = totalPeople[k].collaborated.keys();
                     let temp = {};
 
@@ -110,7 +107,6 @@ const processData = async (movieData) => {
                 }
             }
 
-            //problem is the map is being sent by reference each time need to figure out a way to deep copy
             let merged = multiArr[0].collaborated;
             // console.log multiArr);
             for(let k = 1; k < multiArr.length; ++k){
@@ -140,6 +136,9 @@ const processData = async (movieData) => {
             for(let k = 0; k < people.length; ++k){
                 if(people[k].name === multiArr[0].name){
                     people[k].collaborators = topFiveArr;
+                    if(people[k].name === 'Walter Matthau'){
+                        console.log('hey',sortedMap);
+                    }
                     people[k].collaborated = sortedMap;
                 }
             }
@@ -157,6 +156,9 @@ const processData = async (movieData) => {
             while(value !== undefined){
                 topFiveArr.push(value);
                 value = iterator.next().value
+            }
+            if(people[j].name === 'Walter Matthau'){
+                console.log('hi',sortedMap);
             }
             people[j].collaborators = topFiveArr;
             people[j].collaborated = sortedMap;
@@ -282,16 +284,8 @@ module.exports.getAllMovies = async (req, res) => {
         {genres: new RegExp(req.query.genre, 'i')}
         ]})
         .populate(
-            // {$and:[
-                {path:'directors',
-                match: {name: new RegExp(req.query.name, 'i')}}
-
-                // {path:'writers',
-                // match: {name: new RegExp(req.query.name, 'i')}},
-
-                // {path: 'actors',
-                // match: {name: new RegExp(req.query.name, 'i')}}
-            // ]}
+            {path:'directors',
+            match: {name: new RegExp(req.query.name, 'i')}}
         )
         .populate(
             {path:'writers',
@@ -300,7 +294,7 @@ module.exports.getAllMovies = async (req, res) => {
         .populate(
             {path: 'actors',
             match: {name: new RegExp(req.query.name, 'i')}}
-        )
+        ).skip(req.query.count*10).limit(10)
         .exec((err, result) => {
             let temp1 = result.filter(element => {return element.directors.length !== 0;});
             let temp2 = result.filter(element => {return element.writers.length !== 0;});
