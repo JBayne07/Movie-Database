@@ -260,7 +260,7 @@ const updatePeople = async (body, res) => {
         }
         const result = await Person.findOneAndUpdate({name:person.name}, {collaborated:person.collaborated}).exec();
     }
-    res.status(200).json(movieResult);
+    res.status(201).json(movieResult);
 }
 
 module.exports.addMovie = async (req, res) => {

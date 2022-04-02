@@ -12,7 +12,7 @@ module.exports.addUser = (req, res) => {
         if(err) return console.log(err);
         req.session.userId = user._id.toString();
         console.log('Saved User' + user);
-        res.status(200).json(user);
+        res.status(201).json(user);
     });    
 }
 
